@@ -5,8 +5,7 @@ data class LoginResponse(
     val code:Int?,
     val message:String?,
     val reponseData:ReponseData?,
-
-)
+    )
 
 data class SendOTPResponse(
     val code:Int?,
