@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar"
+
+    tools:context=".view.SuccessActivity">
+    <include
+        android:id="@+id/header_layout"
+        layout="@layout/agent_header"
+        android:visibility="visible"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:background="@color/green">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:src="@drawable/done"
+                android:layout_gravity="center"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_gravity="top"
+            android:gravity="top"
+            android:background="@color/white">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|top"
+                android:layout_marginBottom="10dp"
+                android:gravity="top"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:text="@string/registration_success"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:fontFamily="@font/montserrat_medium" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:text="@string/thank_you_buying_desc"
+                android:layout_gravity="left"
+                android:textSize="12sp"
+                app:fontFamily="@font/montserrat_medium"/>
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

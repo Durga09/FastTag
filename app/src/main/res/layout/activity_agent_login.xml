@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/fastag_banner_bg"
+
+    android:theme="@style/Theme.MaterialComponents.DayNight.DarkActionBar"
+    tools:context=".view.AgentLoginActivity">
+    <include layout="@layout/agent_header"
+        android:visibility="visible"/>
+    <RelativeLayout
+        android:id="@+id/rl_content"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_100sdp"
+        android:layout_alignParentTop="true"
+        app:layout_constraintTop_toTopOf="parent"
+       android:layout_marginTop="@dimen/_25sdp"
+        android:visibility="gone"
+        android:paddingEnd="5dp">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:id="@+id/logoutButton"
+            android:scaleType="fitXY"
+
+            android:layout_centerVertical="true"
+            android:src="@drawable/fasttag_logo_ico" />
+
+    </RelativeLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_centerInParent="true"
+        tools:context=".ui.LoginActivity">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="72dp"
+            android:gravity="center"
+            android:text="@string/login_text"
+            android:textColor="@color/orange_bg"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textSize="32sp"
+            app:fontFamily="@font/montserrat_semibold"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/edit_username"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="20dp"
+
+            android:layout_marginEnd="24dp"
+            android:hint="@string/edit_text_username"
+            app:errorEnabled="true"
+            app:layout_constraintTop_toBottomOf="@+id/textView">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_username_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:maxLines="1"
+                android:text=""
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/edit_password"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="32dp"
+            android:hint="@string/edit_text_password"
+            app:endIconMode="password_toggle"
+            app:errorEnabled="true"
+            app:layout_constraintTop_toBottomOf="@+id/edit_username">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_password_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:maxLines="1"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_login"
+            android:background="@drawable/orange_b_corner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            app:fontFamily="@font/montserrat_bold"
+            android:layout_marginBottom="8dp"
+            android:text="@string/login"
+            android:textAllCaps="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edit_password"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_super_agent_login"
+            android:background="@drawable/orange_b_corner"
+            android:onClick="superAgent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:fontFamily="@font/montserrat_medium"
+            android:layout_marginBottom="8dp"
+            android:text="super Agent"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@+id/button_login"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/team_lead"
+            android:background="@drawable/orange_b_corner"
+            android:onClick="teamLead"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:fontFamily="@font/montserrat_medium"
+            android:layout_marginBottom="8dp"
+            android:text="Team Lead"
+            android:visibility="gone"
+            android:layout_marginTop="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button_super_agent_login"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/button_forgot_pwd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:text="@string/button_sign_up"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            app:fontFamily="@font/montserrat_medium"
+            android:textColor="@color/orange_bg"
+            app:layout_constraintTop_toBottomOf="@+id/button_login"
+            android:padding="@dimen/_10sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/btn_signup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:text="@string/sing_up"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:visibility="gone"
+            app:fontFamily="@font/montserrat_medium"
+            android:textColor="@color/orange_bg"
+            app:layout_constraintTop_toBottomOf="@+id/button_forgot_pwd"
+            android:padding="@dimen/_5sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

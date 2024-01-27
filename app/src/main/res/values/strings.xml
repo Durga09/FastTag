@@ -1,0 +1,124 @@
+<resources>
+    <string name="app_name">FasTag</string>
+    <string name="login_text">Login</string>
+    <string name="edit_text_username">Username</string>
+    <string name="edit_text_password">Password</string>
+    <string name="button_sign_in">Sign in</string>
+    <string name="button_sign_up">Forgot Password?</string>
+    <string name="vehicle_details">Vehicle Details</string>
+    <string name="personal_details">Personal Details</string>
+    <string name="agent_details">Agent Details</string>
+    <string name="team_lead_details">Team Lead Details</string>
+    <string name="address">Address </string>
+    <string name="select_gender">Select Gender </string>
+    <string name="name">Name </string>
+
+    <string name="address_details">Address Details</string>
+    <string name="documents_details">Documents Details</string>
+    <string name="fast_tag_linking">FastTag Linking</string>
+    <string name="enter_barcode_number">Enter Barcode Number</string>
+    <string name="enter_barcode_number_desc">Please collect the Fastag sticker from HD Partner and Scan/Type with(-)</string>
+    <string name="scan_bar_code">SCAN BARCODE</string>
+    <string name="link_your_fast_tag">LINK YOUR FAST TAG</string>
+    <string name="registration_success">Registration Scuccessful</string>
+    <string name="thank_you_buying_desc">Thank you for buying from Highway Delite.YOur fastag is activated</string>
+
+    <string name="referral_code">Referral Code<font color='#FF6224'>*</font></string>
+    <string name="validate">Validate</string>
+    <string name="select_vehicle_type">Select Vehicle Class<font color='#FF6224'>*</font></string>
+    <string name="agent_id">Agent Id</string>
+    <string name="vehicle_number">Vehicle Number<font color='#FF6224'>*</font></string>
+    <string name="kit_number">Kit Number<font color='#FF6224'>*</font></string>
+    v
+    <string name="Add_kit">Add kit</string>
+    <string name="Replace_Kit">Replace Kit</string>
+    <string name="select_vehicle_registration_number">Select Vehicle Number<font color='#FF6224'>*</font></string>
+
+    <string name="vehicle_registration_number">Vehicle Registration Number<font color='#FF6224'>*</font></string>
+    <string name="upload_vehicle_rc">Upload Vehicle RC<font color='#FF6224'>*</font></string>
+    <string name="front_side">Front Side</string>
+    <string name="back_side">Back Side</string>
+    <string name="select_document_type">Select Document Type<font color='#FF6224'>*</font> </string>
+    <string name="document_number">Document Number<font color='#FF6224'>*</font> </string>
+    <string name="upload_document">Upload Document<font color='#FF6224'>*</font> </string>
+    <string name="upload_customer_pic">Upload Customer Image<font color='#FF6224'>*</font> </string>
+    <string name="CUSTOMER">CUSTOMER</string>
+    <string name="TRUCK_RETAIL">TRUCK RETAIL</string>
+    <string name="TRUCK_CORPORATE">TRUCK CORPORATE</string>
+    <string name="enter_otp">Enter OTP<font color='#FF6224'>*</font> </string>
+    <string name="resend">Resend </string>
+    <string name="agent">Agent </string>
+    <string name="super_agent">Super Agent </string>
+    <string name="team_lead">Team Lead </string>
+    <string name="login_from">Login From </string>
+    <string name="select_team_lead">Select Team Lead </string>
+    <string name="submit">Submit</string>
+    <string name="role_from">Role From </string>
+    <string name="entityId">entityId </string>
+    <string name="businessType">businessType</string>
+    <string name="entityType">entityType </string>
+    <string name="team_leads">Team Leads </string>
+    <string name="agents">Agents </string>
+    <string name="no_data_available">No Data Available. Please tray again..</string>
+
+    <string name="get_referral_code_and_agent_id_from_hd_partner">Get \'Referral Code\' and \'Agent Id \' from HD partner</string>
+    <string name="next">Next</string>
+    <string name="first_name">First Name<font color='#FF6224'>*</font></string>
+    <string name="last_name">Last Name<font color='#FF6224'>*</font></string>
+    <string name="gender">Gender<font color='#FF6224'>*</font></string>
+    <string name="date_of_birth">Date of birth</string>
+    <string name="phone_number">Phone Number<font color='#FF6224'>*</font></string>
+    <string name="email">Email<font color='#FF6224'>*</font></string>
+    <string name="address_line_1">Address Line 1</string>
+    <string name="address_line_2">Address Line 2</string>
+    <string name="city">City</string>
+    <string name="phone_number_not_mandatory">Phone Number</string>
+    <string name="email_not_mandatory">Email</string>
+    <string name="role_not_mandatory">Role</string>
+    <string name="please_enter_otp">Please enter otp</string>
+    <string name="invalid_otp">Invalid otp</string>
+
+    <string name="please_enter_phone_number">Please enter phone number</string>
+    <string name="please_enter_new_password">Please enter new password</string>
+    <string name="please_enter_password">Please enter password</string>
+    <string name="please_enter_confirm_password">Please enter confirm password</string>
+    <string name="confirm_password_validation">Password and confirm password should be same</string>
+    <string name="please_enter_user_name">Please enter user name</string>
+    <string name="please_enter_first_name">Please enter first name</string>
+    <string name="please_enter_last_name">Please enter last name</string>
+    <string name="please_enter_email">Please enter email</string>
+    <string name="please_select_vehicle_number">Please Select vehicle number</string>
+    <string name="no_internet_connection">No Internet connection. Please try again..</string>
+
+    <string name="district">District</string>
+    <string name="select_state">Select State</string>
+    <string name="pin_code">PinCode<font color='#FF6224'>*</font></string>
+    <string name="immediate_action">Immediate Action</string>
+    <string name="result_not_found">Result not found</string>
+    <string name="logout">Logout</string>
+    <string name="settings">Settings</string>
+    <string name="password">Password<font color='#FF6224'>*</font></string>
+    <string name="confirm_password">Confirm Password<font color='#FF6224'>*</font></string>
+    <string name="customer_name">Customer Name</string>
+
+    <string name="change_password">Change Password</string>
+    <string name="select_add_replace_kit">Select Add/Replace Kit</string>
+    <string name="get_otp">Get OTP</string>
+    <string name="resend_otp">Resend OTP</string>
+
+    <string name="select_category">Select Category<font color='#FF6224'>*</font></string>
+    <string name="please_select_category">Please Select Category</string>
+
+    <string name="old_kit_number">Old kit number<font color='#FF6224'>*</font></string>
+    <string name="new_kit_number">New kit number<font color='#FF6224'>*</font></string>
+    <string name="get_kit_details">Get Kit Details</string>
+    <string name="login">Login</string>
+    <string name="sing_up">Sing up</string>
+    <string name="signup">SignUp</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="old_password">Old Password<font color='#FF6224'>*</font></string>
+    <string name="new_password">New Password<font color='#FF6224'>*</font></string>
+    <string name="forgot_password">Forgot Password</string>
+
+
+</resources>
