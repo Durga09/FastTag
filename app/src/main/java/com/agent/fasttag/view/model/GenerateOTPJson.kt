@@ -47,6 +47,19 @@ data class GetAgentsByIdRequestJson(
     val AgentId:String,
     val ParentId:String,
     )
+data class GetTransactionIdRequestJson(
+    val SuperAgentId:String,
+    val AgentId:String,
+    val UserEntityId:String,
+    val UserMobile:String,
+    val VehicleNumber:String,
+    val Status:String,
+    val Amount:String
+
+)
+data class GetTransactionStatusRequestJson(
+    val TransactionId:String,
+)
 
 data class PhonePayRequest(
 
