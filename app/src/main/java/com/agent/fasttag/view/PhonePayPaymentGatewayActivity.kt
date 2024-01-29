@@ -5,6 +5,7 @@ package com.agent.fasttag.view
 //import com.phonepe.intent.sdk.api.models.PhonePeEnvironment
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
@@ -52,6 +53,7 @@ class PhonePayPaymentGatewayActivity: AppCompatActivity() {
     private val B2B_PG_REQUEST_CODE = 777
     private var rollID=AppConstants.agentRollId
     private var loginFrom=""
+    private lateinit var fasTagPref: SharedPreferences
     var parentId=""
     var loginUserPhoneNumber=""
     private fun getInstalledUPIApps(): ArrayList<String>? {
@@ -76,7 +78,7 @@ class PhonePayPaymentGatewayActivity: AppCompatActivity() {
         loginFrom = AppConstants.loginFrom
 
         var string_signature = PhonePe.getPackageSignature()
-        val fasTagPref = FasTagSharedPreference.customPreference(this, FasTagSharedPreference.CUSTOM_PREF_NAME)
+         fasTagPref = FasTagSharedPreference.customPreference(this, FasTagSharedPreference.CUSTOM_PREF_NAME)
          parentId=fasTagPref.USER_parentId!!
         loginUserPhoneNumber=fasTagPref.USER_phoneNumber!!
         var roleId=fasTagPref.USER_roleId
@@ -107,13 +109,13 @@ class PhonePayPaymentGatewayActivity: AppCompatActivity() {
 
         val button = findViewById<Button>(R.id.pay_button)
         button.setOnClickListener {
-//            checkStatus()
-            try {
+            getTransactionId()
+            /*try {
                 PhonePe.getImplicitIntent( this, b2BPGRequest, "")
                     ?.let { it1 -> startActivityForResult(it1,B2B_PG_REQUEST_CODE) };
             } catch( e:PhonePeInitException){
 
-            }
+            }*/
         }
         setupVehicleRegviewModelViewModel()
         CallObserveuploadVehicleRegistration()
@@ -126,6 +128,27 @@ class PhonePayPaymentGatewayActivity: AppCompatActivity() {
         if (requestCode == B2B_PG_REQUEST_CODE ) {
             checkStatus()
         }
+    }
+    fun getTransactionId(){
+        AppConstants.launchSunsetDialog(this)
+        var requestData= GetTransactionIdRequestJson(fasTagPref.USER_parentId!!,fasTagPref.USER_agentID!!,
+            fasTagPref.USER_phoneNumber!!,fasTagPref.USER_phoneNumber!!,"20143","Initiated","200")
+
+        val agentRequestJsonData = Gson().toJson(requestData)
+        val jsonObject = JSONObject(agentRequestJsonData)
+        val request = jsonObject.toString().toRequestBody("application/json".toMediaTypeOrNull());
+        println("GetAgentsByIdRequestJson:: "+jsonObject)
+        vehicleRegviewModel.getTransactionID(request)
+    }
+    fun getTransactionStatus(trasactionId:String){
+        AppConstants.launchSunsetDialog(this)
+        var requestData= GetTransactionStatusRequestJson(trasactionId)
+
+        val agentRequestJsonData = Gson().toJson(requestData)
+        val jsonObject = JSONObject(agentRequestJsonData)
+        val request = jsonObject.toString().toRequestBody("application/json".toMediaTypeOrNull());
+        println("GetAgentsByIdRequestJson:: "+jsonObject)
+        vehicleRegviewModel.getTransactionStatus(request)
     }
     fun CallObserveuploadVehicleRegistration() {
 
@@ -158,6 +181,52 @@ class PhonePayPaymentGatewayActivity: AppCompatActivity() {
                         AppConstants.showMessageAlert(this, it.data?.result?.txId)
                     }else{
                         AppConstants.showMessageAlert(this, it.data?.exception?.detailMessage)
+
+                    }
+                }
+                Status.LOADING -> {
+                    AppConstants.launchSunsetDialog(this)
+                }
+                Status.ERROR -> {
+                    //Handle Error
+                    AppConstants.cancelSunsetDialog()
+                    Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+        vehicleRegviewModel.getTransactionIdData().observe(this) {
+            AppConstants.cancelSunsetDialog()
+            println("loadWalletRequestData:: $it")
+            when (it.status) {
+                Status.SUCCESS -> {
+                    if(it.data?.status==true) {
+//                        AppConstants.showMessageAlert(this, it.data?.reponseData?.transactionId)
+                        getTransactionStatus(it.data?.reponseData?.transactionId!!)
+
+                    }else{
+                        AppConstants.showMessageAlert(this, it.data?.message)
+
+                    }
+                }
+                Status.LOADING -> {
+                    AppConstants.launchSunsetDialog(this)
+                }
+                Status.ERROR -> {
+                    //Handle Error
+                    AppConstants.cancelSunsetDialog()
+                    Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+        vehicleRegviewModel.getTransactionStatusRequestData().observe(this) {
+            AppConstants.cancelSunsetDialog()
+            println("loadWalletRequestData:: $it")
+            when (it.status) {
+                Status.SUCCESS -> {
+                    if(it.data?.status==true) {
+                        AppConstants.showMessageAlert(this, it.data?.message)
+                    }else{
+                        AppConstants.showMessageAlert(this, it.data?.message)
 
                     }
                 }
