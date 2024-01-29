@@ -30,9 +30,23 @@ data class PaymentBase64Response(
     val message:String?,
     val data:PaymentBase64ResponseData?,
 )
+data class GetTransactionResponseData(
+    val status:Boolean,
+    val message:String?,
+    val reponseData:TransactionResponseData?,
+)
+data class TransactionResponseData(
+    val transactionId:String,
+    val callBackUrl:String?,
+)
 data class PaymentLoadWalletResponse(
     val result:LoadWalletResultData?,
     val exception:LoadWalletExceptionData?,
+)
+data class GetTransactionStatusResData(
+    val status:Boolean,
+    val message:String?,
+    val reponseData:GetTransactionIdRequestJson?,
 )
 data class LoadWalletResultData(
     val txId:String,
