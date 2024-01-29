@@ -88,6 +88,15 @@ interface RetrofitService {
 
     @Headers( "Content-Type: application/json; charset=utf-8")
     @POST()
+    suspend fun getTransactionId(@Url url:String,@Header("Authorization")  authorization:String,@Body jsonObject: RequestBody): Response<GetTransactionResponseData>
+
+    @Headers( "Content-Type: application/json; charset=utf-8")
+    @POST()
+    suspend fun getTransactionStatus(@Url url:String,@Header("Authorization")  authorization:String,@Body jsonObject: RequestBody): Response<GetTransactionStatusResData>
+
+
+    @Headers( "Content-Type: application/json; charset=utf-8")
+    @POST()
     suspend fun saveCustomerDetails(@Url url:String,@Header("Authorization")  authorization:String,@Body jsonObject: RequestBody): Response<CustomerCreateResponseData>
 
     @Headers( "Content-Type: application/json; charset=utf-8")
