@@ -71,6 +71,9 @@ class FasTagRepository constructor(private val retrofitService: RetrofitService)
     suspend fun getTransactionStatus(jsonObj:RequestBody)=
         retrofitService.getTransactionStatus(AppConstants.LoginBaseUrl+AppConstants.GetTransactionStatus,AppConstants.LoginAuthorization,jsonObj)
 
+    suspend fun getTransactionDetailsByAgent(jsonObj:RequestBody)=
+        retrofitService.getTransactionDetailsByAgent(AppConstants.LoginBaseUrl+AppConstants.GetTransactionByAgent,AppConstants.LoginAuthorization,jsonObj)
+
     suspend fun getOTP(jsonObj:RequestBody)=
         retrofitService.getOtp(AppConstants.LoginBaseUrl+AppConstants.getOtp,jsonObj)
 

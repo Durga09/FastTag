@@ -94,6 +94,9 @@ interface RetrofitService {
     @POST()
     suspend fun getTransactionStatus(@Url url:String,@Header("Authorization")  authorization:String,@Body jsonObject: RequestBody): Response<GetTransactionStatusResData>
 
+    @Headers( "Content-Type: application/json; charset=utf-8")
+    @POST()
+    suspend fun getTransactionDetailsByAgent(@Url url:String,@Header("Authorization")  authorization:String,@Body jsonObject: RequestBody): Response<GetTransactionsResDataByAgent>
 
     @Headers( "Content-Type: application/json; charset=utf-8")
     @POST()

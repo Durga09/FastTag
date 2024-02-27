@@ -12,6 +12,7 @@
     <string name="address">Address </string>
     <string name="select_gender">Select Gender </string>
     <string name="name">Name </string>
+    <string name="do_you_want_to_logout">Are sure? do you want to logout?</string>
 
     <string name="address_details">Address Details</string>
     <string name="documents_details">Documents Details</string>
@@ -29,7 +30,8 @@
     <string name="agent_id">Agent Id</string>
     <string name="vehicle_number">Vehicle Number<font color='#FF6224'>*</font></string>
     <string name="kit_number">Kit Number<font color='#FF6224'>*</font></string>
-    v
+    <string name="transaction_id">Transaction Id</string>
+
     <string name="Add_kit">Add kit</string>
     <string name="Replace_Kit">Replace Kit</string>
     <string name="select_vehicle_registration_number">Select Vehicle Number<font color='#FF6224'>*</font></string>
@@ -48,6 +50,8 @@
     <string name="enter_otp">Enter OTP<font color='#FF6224'>*</font> </string>
     <string name="resend">Resend </string>
     <string name="agent">Agent </string>
+    <string name="attached_agent">Attached Agent </string>
+
     <string name="super_agent">Super Agent </string>
     <string name="team_lead">Team Lead </string>
     <string name="login_from">Login From </string>
@@ -60,7 +64,9 @@
     <string name="team_leads">Team Leads </string>
     <string name="agents">Agents </string>
     <string name="no_data_available">No Data Available. Please tray again..</string>
-
+    <string name="transactions">Transactions </string>
+    <string name="to_payment_gateway">Go to payment gateway </string>
+    <string name="Rs">\u20B9 200</string>
     <string name="get_referral_code_and_agent_id_from_hd_partner">Get \'Referral Code\' and \'Agent Id \' from HD partner</string>
     <string name="next">Next</string>
     <string name="first_name">First Name<font color='#FF6224'>*</font></string>

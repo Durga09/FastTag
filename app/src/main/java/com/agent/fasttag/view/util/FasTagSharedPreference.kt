@@ -11,6 +11,7 @@ object FasTagSharedPreference {
 
         val USER_ID = "USER_ID"
         val USER_PASSWORD = "PASSWORD"
+        val PAYMENT_BACK_URL = "PAYMENT_BACK_URL"
         val Login_USER_parentId = "Login_USER_parentId"
         val LOGIN_USER_USERNAME = "LOGIN_USER_USERNAME"
         val Login_USER_email ="Login_USER_email"
@@ -19,7 +20,7 @@ object FasTagSharedPreference {
         val Login_USER_lastName ="Login_USER_lastName"
         val Login_USER_roleId ="Login_USER_roleId"
         val Login_USER_roleName ="Login_USER_roleName"
-    val Login_USER_agentID ="Login_USER_agentID"
+        val Login_USER_agentID ="Login_USER_agentID"
 
     fun defaultPreference(context: Context): SharedPreferences =
             PreferenceManager.getDefaultSharedPreferences(context)
@@ -30,9 +31,16 @@ object FasTagSharedPreference {
         inline fun SharedPreferences.editMe(operation: (SharedPreferences.Editor) -> Unit) {
             val editMe = edit()
             operation(editMe)
+
             editMe.apply()
         }
-
+    inline fun SharedPreferences.clear(operation: (SharedPreferences.Editor) -> Unit) {
+        val editMe = edit()
+        operation(editMe)
+        editMe.clear();
+        editMe.commit();
+        editMe.apply()
+    }
         var SharedPreferences.userId
             get() = getInt(USER_ID, 0)
             set(value) {
@@ -53,6 +61,14 @@ object FasTagSharedPreference {
         set(value) {
             editMe {
                 it.putString(LOGIN_USER_USERNAME, value)
+                it.commit()
+            }
+        }
+    var SharedPreferences.PAYMENTBACKURL
+        get() = getString(PAYMENT_BACK_URL, "")
+        set(value) {
+            editMe {
+                it.putString(PAYMENT_BACK_URL, value)
                 it.commit()
             }
         }
@@ -123,4 +139,6 @@ object FasTagSharedPreference {
                     it.clear()
                 }
             }
+
+
     }

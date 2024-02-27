@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.graphics.Color
 import android.net.ConnectivityManager
+import android.os.Build
 import android.text.Html
 import android.text.Layout
 import android.text.SpannableString
@@ -13,10 +14,16 @@ import android.text.style.AlignmentSpan
 import android.util.Patterns
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import com.agent.fasttag.R
 import com.agent.fasttag.view.model.PersonalDetailsData
 import com.marwaeltayeb.progressdialog.ProgressDialog
 import retrofit2.Retrofit
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatterBuilder
+import java.util.*
 
 
 object AppConstants {
@@ -24,6 +31,8 @@ object AppConstants {
     val uploadKyc="uploadKyc"
 //    var vehicleRegistration="v3/register"
     var vehicleRegistration="registration-manager/v3/register"
+    const val DATE_FORMAT = "dd/MM/yyyy"
+    const val SERVER_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"
 
     var UnregisteredNegativeList="fleet-manager/UnregisteredNegativeList"
     var getTagList= "business-entity-manager/getTagList"
@@ -33,7 +42,7 @@ object AppConstants {
     val teamLeadRollId="2"
     val superAgentRollId="1"
     var parentId=""
-
+    var vehicleNumberVal=""
     var baseURL="https://kycuat.yappay.in/kyc/"
     var vehicleRegistrationBaseUrl="https://uat-fleetdrive.m2pfintech.com/core/Yappay/registration-manager/"
     var KitBaseUrl= "https://sit-secure.yappay.in/Yappay/"
@@ -45,6 +54,9 @@ object AppConstants {
     var paymentLoadWalletBaseUrl= "https://uat-fleetdrive.m2pfintech.com/core/Yappay/txn-manager/create"
 
     var paymentGatewayCheckStatusBaseUrl= "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/status"
+    var GetTransactionId="transaction/saveTransaction"
+    var GetTransactionStatus="transaction/getTransactionStatus"
+    var GetTransactionByAgent="transaction/getTransactionByAgent"
 
     var SaveOrEditAgent="agent/saveOrEditAgent"
     var GetAllRolls="role/getAllRoles"
@@ -110,11 +122,14 @@ object AppConstants {
              .setCancelable(false)
 //            .setProgressBarShape(ContextCompat.getDrawable(context, R.drawable.animated_images))
             .setText("Please wait...")
-        progressDialog?.show()
+        if(progressDialog?.isShowing == false) {
+            progressDialog?.show()
+        }
     }
     fun cancelSunsetDialog(){
         progressDialog?.dismiss()
     }
+
 
     fun showMessageAlert(mContext: Activity, message: String?) {
         mContext.runOnUiThread {
@@ -208,5 +223,44 @@ object AppConstants {
         val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork = cm.activeNetworkInfo
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting
+    }
+    fun getShortDate(ts:String?):String{
+        if(ts == null) return ""
+        //Get instance of calendar
+        val calendar = Calendar.getInstance(Locale.getDefault())
+        //get current date from ts
+        calendar.timeInMillis = ts.toLong()
+        //return formatted date
+        return android.text.format.DateFormat.format("E, dd MMM yyyy", calendar).toString()
+    }
+     @RequiresApi(Build.VERSION_CODES.O)
+     fun getDateTime(s: String): String? {
+//            val sdf = SimpleDateFormat("MM/dd/yyyy")
+//            val netDate = Date(s.toLong() * 1000)
+//            return sdf.format(netDate)
+         val formatter: DateTimeFormatter = DateTimeFormatterBuilder()
+             .optionalStart()
+             .append(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+             .optionalEnd()
+             .optionalStart()
+             .append(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+             .optionalEnd().toFormatter()
+         val format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSX")
+         val result: LocalDateTime = LocalDateTime.parse(s, formatter)
+
+
+         return result.toString()
+
+     }
+    fun String.convertDateFormat(dateFormat : String = DATE_FORMAT, actualFormat : String = SERVER_DATE_FORMAT): String{
+        val sdf = SimpleDateFormat(actualFormat, Locale.getDefault())
+        val convertSdf = SimpleDateFormat(dateFormat, Locale.getDefault())
+//    sdf.timeZone = TimeZone.getTimeZone("UTC")
+        val dateTime = sdf.parse(this)
+        val cal  = Calendar.getInstance()
+        cal.time = dateTime
+        /* if (dateFormat == DOCUMENTS_FORMAT)
+             cal.add(Calendar.HOUR, -11)*/
+        return convertSdf.format(cal.time)
     }
 }

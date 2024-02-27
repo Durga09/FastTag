@@ -226,10 +226,10 @@
                             >
 
                             <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/et_kit_number_input"
+                                    android:id="@+id/et_kit_number_input"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text=""
+                                android:text="652210-108-1034127"
                                 android:inputType="text"
                                 android:maxLines="1" />
 
@@ -248,7 +248,7 @@
 
                             android:id="@+id/scanned_kt_number"
                             android:background="@drawable/edite_text_bg"
-                            android:text=""
+                            android:text="652210-108-1034127"
                             android:hint="608116-XXX-XXXXXXX" />
                         <androidx.appcompat.widget.AppCompatButton
                             android:layout_width="wrap_content"

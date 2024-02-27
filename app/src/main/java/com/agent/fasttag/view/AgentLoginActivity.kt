@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
@@ -64,13 +65,15 @@ class AgentLoginActivity : AppCompatActivity() {
     private var passwordVal:String=""
     lateinit var viewModel: FastTagViewModel
     val CUSTOM_PREF_NAME = "User_data"
-
+    private lateinit var fasTagPref: SharedPreferences
+    var USER_roleId=""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAgentLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-
+        fasTagPref = FasTagSharedPreference.customPreference(this, FasTagSharedPreference.CUSTOM_PREF_NAME)
+        USER_roleId=fasTagPref.USER_roleId!!
      /*  var encriptVal= encrypt(actualVal,"ASDFGHJKLASDFGHJ")
         println("ENCRIPTVAL EEEE::$encriptVal")
         var decriptVal= decrypt("3kumWrwb5At/tBOvQZcyC9HsDWg6UPZsJGHw9rFa2oQ=","ASDFGHJKLASDFGHJ")
@@ -112,7 +115,7 @@ class AgentLoginActivity : AppCompatActivity() {
             var intent=  Intent(this, PhonePayPaymentGatewayActivity::class.java)
 
 //            var intent=  Intent(this, ForgotPasswordActivity::class.java)
-            intent.putExtra(getString(R.string.login_from),getString(R.string.agent))
+//            intent.putExtra(getString(R.string.login_from),getString(R.string.agent))
             startActivity(intent)
             AppConstants.slideToRightAnim(this)
         }
@@ -148,22 +151,7 @@ class AgentLoginActivity : AppCompatActivity() {
                         prefs.USER_agentID = it.data?.reponseData?.agentId
 
                         if(it.data!!.message == "User logged in successfully.") {
-                            var intent = Intent(this, AgentHomeActivity::class.java)
-                            var agentType = getString(R.string.agent)
-                            if (it.data?.reponseData?.roleId!! == "1") {
-                                agentType = getString(R.string.super_agent)
-                            } else if (it.data?.reponseData?.roleId!! == "2") {
-                                agentType = getString(R.string.team_lead)
-
-                            } else {
-                                agentType = getString(R.string.agent)
-
-                            }
-                            intent.putExtra(getString(R.string.login_from), agentType)
-                            AppConstants.loginFrom=agentType
-                            startActivity(intent)
-
-                            AppConstants.slideToRightAnim(this)
+                            loginToUser(it.data?.reponseData?.roleId!!)
                         }
                     }else if(it.data!!.code==1){
                         showResponseMessageAlert(
@@ -190,6 +178,24 @@ class AgentLoginActivity : AppCompatActivity() {
                 }
 
         }
+    fun loginToUser(roleId:String){
+        var intent = Intent(this, AgentHomeActivity::class.java)
+        var agentType = getString(R.string.agent)
+        agentType = if (roleId == "1") {
+            getString(R.string.super_agent)
+        } else if (roleId == "2") {
+            getString(R.string.team_lead)
+
+        } else {
+            getString(R.string.agent)
+
+        }
+        intent.putExtra(getString(R.string.login_from), agentType)
+        AppConstants.loginFrom=agentType
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        AppConstants.slideToRightAnim(this)
+    }
 
       fun login(){
          AppConstants.launchSunsetDialog(this)

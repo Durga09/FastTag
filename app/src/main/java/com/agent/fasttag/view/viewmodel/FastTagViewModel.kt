@@ -5,8 +5,6 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.agent.fasttag.view.model.*
-import com.agent.fasttag.view.phonepay.model.status.CheckStatusModel
-import com.agent.fasttag.view.util.AppConstants
 import com.agent.fasttag.view.util.Resource
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.*
@@ -40,7 +38,10 @@ class FastTagViewModel(private val fasTagRepository: FasTagRepository): ViewMode
     val checkStatusModelData = MutableLiveData<Resource<PaymentBase64Response>>()
     val checkStatusOfPaymentPhonePe = MutableLiveData<Resource<PaymentBase64Response>>()
     val loadWalletRequestData = MutableLiveData<Resource<PaymentLoadWalletResponse>>()
+    val getTransactionStatusRequestData = MutableLiveData<Resource<GetTransactionStatusResData>>()
+    val getGetTransactionsResDataByAgent = MutableLiveData<Resource<GetTransactionsResDataByAgent>>()
 
+    val getTransactionIdRequestData = MutableLiveData<Resource<GetTransactionResponseData>>()
 
     var job: Job?=null
     val errorMessage = MutableLiveData<String>()
@@ -109,6 +110,18 @@ class FastTagViewModel(private val fasTagRepository: FasTagRepository): ViewMode
     fun loadWalletRequestData(): MutableLiveData<Resource<PaymentLoadWalletResponse>> {
         return loadWalletRequestData
     }
+    fun getTransactionIdData(): MutableLiveData<Resource<GetTransactionResponseData>> {
+        return getTransactionIdRequestData
+    }
+    fun getTransactionStatusRequestData(): MutableLiveData<Resource<GetTransactionStatusResData>> {
+        return getTransactionStatusRequestData
+    }
+    fun getTransactionsResDataByAgentRequestData(): MutableLiveData<Resource<GetTransactionsResDataByAgent>> {
+        return getGetTransactionsResDataByAgent
+    }
+
+
+
 
     fun getGenerateOtp(tenant:String,partnerId:String,partnerToken:String,jsonObj: String){
 
@@ -532,6 +545,112 @@ class FastTagViewModel(private val fasTagRepository: FasTagRepository): ViewMode
             }
         }
     }
+    fun getTransactionID(customerData: RequestBody){
+        CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
+            val response = fasTagRepository.getTransaction(customerData)
+            withContext(Dispatchers.Main){
+                print("response header:: ${response.raw().request.headers}")
+
+                if(response.code()==200){
+                    println("response 200 success:: ${response.body()}")
+
+                    getTransactionIdRequestData.postValue(Resource.success(response.body()))
+                    loading.value=false
+                }
+                else if(response.code()==401 || response.code()==400){
+
+                    getTransactionIdRequestData.postValue(Resource.success(GetTransactionResponseData(false,"Something went wrong. Please try again..",null)))
+
+                }
+                else if(response.code()==500){
+                    val gson = GsonBuilder()
+                        .setLenient()
+                        .create()
+
+                    var locerr = gson.fromJson(response?.errorBody()?.string(),
+                        ErrorResponse::class.java)
+                    println("errorResponse:: ${locerr.exception}")
+                      getTransactionIdRequestData.postValue(Resource.success(GetTransactionResponseData(false,locerr.exception.detailMessage,null)))
+                }
+                else{
+                    println("response:: $response")
+                    onError("Error : ${response.message()} ")
+                }
+            }
+        }
+    }
+    fun getTransactionStatus(customerData: RequestBody){
+        CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
+            val response = fasTagRepository.getTransactionStatus(customerData)
+            withContext(Dispatchers.Main){
+                print("response header:: ${response.raw().request.headers}")
+
+                if(response.code()==200){
+                    println("response 200 success:: ${response.body()}")
+
+                    getTransactionStatusRequestData.postValue(Resource.success(response.body()))
+                    loading.value=false
+                }
+                else if(response.code()==401 || response.code()==400){
+
+                    getTransactionStatusRequestData.postValue(Resource.success(
+                        GetTransactionStatusResData(false,"Something went wrong. Please try again..",null)
+                    ))
+
+                }
+                else if(response.code()==500){
+                    val gson = GsonBuilder()
+                        .setLenient()
+                        .create()
+
+                    var locerr = gson.fromJson(response?.errorBody()?.string(),
+                        ErrorResponse::class.java)
+                    println("errorResponse:: ${locerr.exception}")
+                    getTransactionStatusRequestData.postValue(Resource.success(GetTransactionStatusResData(false,locerr.exception.detailMessage,null)))
+                }
+                else{
+                    println("response:: $response")
+                    onError("Error : ${response.message()} ")
+                }
+            }
+        }
+    }
+    fun getTransactionDetailsByAgent(customerData: RequestBody){
+        CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
+            val response = fasTagRepository.getTransactionDetailsByAgent(customerData)
+            withContext(Dispatchers.Main){
+                print("response header:: ${response.raw().request.headers}")
+
+                if(response.code()==200){
+                    println("response 200 success:: ${response.body()}")
+
+                    getGetTransactionsResDataByAgent.postValue(Resource.success(response.body()))
+                    loading.value=false
+                }
+                else if(response.code()==401 || response.code()==400){
+
+//                    getGetTransactionsResDataByAgent.postValue(Resource.success(
+//                        GetTransactionsResDataByAgent(false,"Something went wrong. Please try again..",null)
+//                    ))
+
+                }
+                else if(response.code()==500){
+                    val gson = GsonBuilder()
+                        .setLenient()
+                        .create()
+
+                    var locerr = gson.fromJson(response?.errorBody()?.string(),
+                        ErrorResponse::class.java)
+                    println("errorResponse:: ${locerr.exception}")
+//                    getGetTransactionsResDataByAgent.postValue(Resource.success(GetTransactionStatusResData(false,locerr.exception.detailMessage,null)))
+                }
+                else{
+                    println("response:: $response")
+                    onError("Error : ${response.message()} ")
+                }
+            }
+        }
+    }
     fun saveCustomerDetailsRequest(customerData: RequestBody){
         CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
             val response = fasTagRepository.saveCustomerDetails(customerData)
@@ -624,11 +743,13 @@ class FastTagViewModel(private val fasTagRepository: FasTagRepository): ViewMode
                     var locerr = gson.fromJson(response?.errorBody()?.string(),
                         ErrorResponse::class.java)
                     println("errorResponse:: ${locerr.exception}")
+                    checkStatusOfPaymentPhonePe.postValue(Resource.success(response.body()))
+
 //                    onError("Error errorBody: ${locerr.exception.detailMessage} ")
-                    val resultData = UploadKycException(detailMessage = locerr.exception.detailMessage)
-                    var personalDetailsResponseData=  UploadKycResData(exception = resultData, result = UploadKycResultData(false))
-//                    val oTPResponseData = PersonalDetailsException(response.body())
-                    fileUploadKycnData.postValue(Resource.success(personalDetailsResponseData))
+//                    val resultData = UploadKycException(detailMessage = locerr.exception.detailMessage)
+//                    var personalDetailsResponseData=  UploadKycResData(exception = resultData, result = UploadKycResultData(false))
+////                    val oTPResponseData = PersonalDetailsException(response.body())
+//                    fileUploadKycnData.postValue(Resource.success(personalDetailsResponseData))
                 }
                 else{
                     println("response:: $response")

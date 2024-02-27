@@ -38,8 +38,8 @@
                 android:padding="@dimen/_15sdp">
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/iv_photo"
-                    android:layout_width="@dimen/_55sdp"
-                    android:layout_height="@dimen/_55sdp"
+                    android:layout_width="@dimen/_45sdp"
+                    android:layout_height="@dimen/_45sdp"
                     tools:ignore="UnusedAttribute"
                     android:src="@drawable/user"
                     app:layout_constraintStart_toStartOf="parent"
@@ -67,6 +67,7 @@
                     android:text="Durga Prasad"
                     android:textSize="@dimen/_13ssp"
                     android:textColor="@color/black"
+                    app:fontFamily="@font/montserrat_medium"
                     android:layout_marginStart="@dimen/_15sdp" />
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_role_name"
@@ -77,6 +78,7 @@
                     android:textSize="@dimen/_11ssp"
                     android:visibility="visible"
                     android:textColor="@color/black"
+                    app:fontFamily="@font/montserrat_regular"
                     app:layout_constraintStart_toStartOf="@id/tv_username"
                     app:layout_constraintTop_toBottomOf="@+id/tv_username"
                     app:layout_constraintEnd_toEndOf="parent"/>
@@ -121,9 +123,10 @@
                         android:textSize="@dimen/_12ssp"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
+                        app:fontFamily="@font/montserrat_regular"
                         app:layout_constraintStart_toEndOf="@+id/iv_agents"
                         android:background="?selectableItemBackground"
-                        android:text="@string/agent" />
+                        android:text="@string/attached_agent" />
                     <ImageView
                         android:layout_width="@dimen/_15sdp"
                         android:layout_height="@dimen/_15sdp"
@@ -167,6 +170,7 @@
                         android:textSize="@dimen/_12ssp"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
+                        app:fontFamily="@font/montserrat_regular"
                         app:layout_constraintStart_toEndOf="@+id/iv_settings"
                         android:background="?selectableItemBackground"
                         android:text="@string/change_password" />
@@ -212,6 +216,7 @@
                         android:paddingEnd="@dimen/_15sdp"
                         android:textSize="@dimen/_12ssp"
                         app:layout_constraintTop_toTopOf="parent"
+                        app:fontFamily="@font/montserrat_regular"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/iv_logout"
                         android:background="?selectableItemBackground"

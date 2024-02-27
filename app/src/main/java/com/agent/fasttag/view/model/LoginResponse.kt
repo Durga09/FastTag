@@ -46,7 +46,12 @@ data class PaymentLoadWalletResponse(
 data class GetTransactionStatusResData(
     val status:Boolean,
     val message:String?,
-    val reponseData:GetTransactionIdRequestJson?,
+    val reponseData:GetTransactionIdResData?,
+)
+data class GetTransactionsResDataByAgent(
+    val status:Boolean,
+    val message:String?,
+    val reponseData:List<GetTransactionByIdRes>,
 )
 data class LoadWalletResultData(
     val txId:String,
@@ -60,6 +65,16 @@ data class PaymentBase64ResponseData(
     val merchantId:String,
     val merchantTransactionId:String?,
     val instrumentResponse:InstrumentResponse?,
+    val paymentInstrument:PaymentInstrumentByPhonepe?,
+)
+data class PaymentInstrumentByPhonepe(
+    val type:String,
+    val pgTransactionId:String?,
+    val pgServiceTransactionId:String?,
+//    val bankTransactionId:String?,
+    val bankId:String?,
+    val arn:String?
+
 )
 data class InstrumentResponse(
     val type:String,

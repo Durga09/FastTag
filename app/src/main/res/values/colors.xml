@@ -9,9 +9,10 @@
     <color name="white">#FFFFFFFF</color>
     <color name="new_gray_color">#414042</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="green">#09C89B</color>
+    <color name="green">#009688</color>
     <color name="blue">#7AC7EE</color>
     <color name="orange_bg">#FF6224</color>
     <color name="grey_text_font_3.1">#5C5E5E</color>
+    <color name="light_grey">#C0ECEC</color>
 
 </resources>

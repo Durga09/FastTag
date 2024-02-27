@@ -1,13 +1,15 @@
 package com.agent.fasttag.view
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.text.Html
 import android.view.Gravity
 import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.agent.fasttag.CreateAgentActivity
@@ -17,14 +19,9 @@ import com.agent.fasttag.view.util.AppConstants
 import com.agent.fasttag.view.util.FasTagSharedPreference
 import com.agent.fasttag.view.util.FasTagSharedPreference.USER_USERNAME
 import com.agent.fasttag.view.util.FasTagSharedPreference.USER_agentID
-import com.agent.fasttag.view.util.FasTagSharedPreference.USER_parentId
 import com.agent.fasttag.view.util.FasTagSharedPreference.USER_roleName
-import java.util.Base64
-import javax.crypto.Cipher
-import javax.crypto.SecretKeyFactory
-import javax.crypto.spec.IvParameterSpec
-import javax.crypto.spec.PBEKeySpec
-import javax.crypto.spec.SecretKeySpec
+import com.agent.fasttag.view.util.FasTagSharedPreference.clear
+import java.util.*
 
 
 class AgentHomeActivity : AppCompatActivity() {
@@ -130,12 +127,8 @@ class AgentHomeActivity : AppCompatActivity() {
 //        binding.leftDrawerMenu.ivPhoto.loadUrlUsingGlide(PrefsHelper.profileUrl)
         binding.leftDrawerMenu.clLogOut.setOnClickListener {
 //            binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-            binding.drawerLayout.closeDrawers()
-            finish()
-            overridePendingTransition(
-                R.anim.slide_in_right,
-                R.anim.slide_out_left
-            );
+           logoutAlert()
+
 
         }
     }
@@ -163,9 +156,18 @@ class AgentHomeActivity : AppCompatActivity() {
 
 
     }
+    fun getTransactions(view:View){
+        var intent=Intent(this, TransactionsListActivity::class.java)
+        intent.putExtra(getString(R.string.role_from),getString(R.string.team_lead))
+        startActivity(intent)
+        AppConstants.slideToRightAnim(this)
+
+
+    }
      fun createAgent(view:View){
-        var intent=Intent(this, CreateAgentActivity::class.java)
-        intent.putExtra(getString(R.string.role_from),getString(R.string.agent))
+//        var intent=Intent(this, CreateAgentActivity::class.java)
+         var intent=Intent(this, PhonePayPaymentGatewayActivity::class.java)
+         intent.putExtra(getString(R.string.to_payment_gateway),getString(R.string.documents_details))
         startActivity(intent)
         AppConstants.slideToRightAnim(this)
     }
@@ -202,7 +204,41 @@ class AgentHomeActivity : AppCompatActivity() {
 
         return decoded
     }
+    private fun logoutAlert()
+    {
 
+        runOnUiThread {
+            val builder = AlertDialog.Builder(this)
+            builder.setMessage(getString(R.string.do_you_want_to_logout))
+            builder.setTitle(getString(R.string.app_name))
+            builder.setCancelable(false)
+            builder.setPositiveButton(
+                Html.fromHtml("<font color=" + this.resources.getColor(R.color.black) + ">Yes</font>"),
+                DialogInterface.OnClickListener {
+                        dialog: DialogInterface, _: Int -> dialog.dismiss()
+                    dialog.dismiss()
+                    binding.drawerLayout.closeDrawers()
+                    var  fasTagPref = FasTagSharedPreference.customPreference(this, FasTagSharedPreference.CUSTOM_PREF_NAME)
+                    fasTagPref.clear {
+                        it.clear().commit()
+                    }
+                    val intent = Intent(this, AgentLoginActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                    AppConstants.slideToLeftAnim(this)
+
+                })
+            builder.setNegativeButton(
+                Html.fromHtml("<font color=" + this.resources.getColor(R.color.black) + ">No</font>"),
+                DialogInterface.OnClickListener {
+                        dialog: DialogInterface, _: Int -> dialog.dismiss()
+                    dialog.dismiss()
+                })
+            val alertDialog = builder.create()
+            // Show the Alert Dialog box
+            alertDialog.show()
+        }
+    }
     /*fun decrypt(strToDecrypt : String) : String? {
         try
         {

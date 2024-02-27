@@ -16,16 +16,37 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FastTag"
         tools:targetApi="21">
-        <!--<meta-data android:name="com.phonepe.android.sdk.isUAT" android:value="true"/>
+        <activity
+            android:name=".view.AgentLoginActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeOld.NoActionBar">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".view.TransactionsListActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeOld.NoActionBar">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <!--
+        <meta-data android:name="com.phonepe.android.sdk.isUAT" android:value="true"/>
         <meta-data android:name="com.phonepe.android.sdk.isSimulator" android:value="true"/>
         <meta-data android:name="com.phonepe.android.sdk.MerchantId" android:value="M224GVZX415V2"/>
-        <meta-data android:name="com.phonepe.android.sdk.AppId" android:value=""/>-->
-
-        <!-- For UAT, App Id is not required.
-        Make sure to add the following and you get the APP Id for Production after UAT Sign-off -->
-        <!--        <meta-data-->
-        <!--            android:name="com.phonepe.android.sdk.AppId"-->
-        <!--            android:value="<your app id given by PhonePe>"/>-->
+        <meta-data android:name="com.phonepe.android.sdk.AppId" android:value=""/>
+        -->
+        <!--
+ For UAT, App Id is not required.
+        Make sure to add the following and you get the APP Id for Production after UAT Sign-off
+        -->
+        <!-- <meta-data -->
+        <!-- android:name="com.phonepe.android.sdk.AppId" -->
+        <!-- android:value="<your app id given by PhonePe>"/> -->
         <activity
             android:name=".view.PhonePayPaymentGatewayActivity"
             android:exported="false"
@@ -153,7 +174,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".view.AgentLoginActivity"
+            android:name=".view.SplashScreenActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppThemeOld.NoActionBar">
@@ -167,14 +188,6 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-     <!--   <meta-data android:name="com.phonepe.android.sdk.isUAT" android:value="false"/>
-        <meta-data android:name="com.phonepe.android.sdk.isSimulator" android:value="false"/>
-        <meta-data android:name="com.phonepe.android.sdk.MerchantId" android:value="M224GVZX415V2"/>
-        <meta-data android:name="com.phonepe.android.sdk.AppId" android:value=""/>-->
-
     </application>
-   <!-- <queries>
-        <package android:name="com.phonepe.app" />
-       </queries>-->
 
 </manifest>
