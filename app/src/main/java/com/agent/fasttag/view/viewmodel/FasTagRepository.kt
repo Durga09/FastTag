@@ -88,4 +88,10 @@ class FasTagRepository constructor(private val retrofitService: RetrofitService)
 
     suspend fun loadWalletRequest(tenant:String,jsonObj:RequestBody)=
         retrofitService.paymentWallet(AppConstants.paymentLoadWalletBaseUrl,tenant,jsonObj)
+
+    suspend fun uploadTagsRequest(jsonObj:RequestBody)=
+        retrofitService.uploadTags(AppConstants.LoginBaseUrl+AppConstants.uploadTags,jsonObj,AppConstants.LoginAuthorization)
+
+    suspend fun getTagBySerialNumber(jsonObj:RequestBody)=
+        retrofitService.getTagBySerialNumber(AppConstants.LoginBaseUrl+AppConstants.getTagBySerailNo,jsonObj,AppConstants.LoginAuthorization)
 }

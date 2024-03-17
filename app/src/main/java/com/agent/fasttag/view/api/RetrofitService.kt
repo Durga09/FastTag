@@ -124,6 +124,14 @@ interface RetrofitService {
         ): Response<PaymentBase64Response>
 
 
+    @Headers( "Content-Type: application/json; charset=utf-8")
+    @POST()
+    suspend fun uploadTags(@Url url:String,@Body jsonObject: RequestBody,@Header("Authorization")  authorization:String): Response<UploadTagsResponseData>
+
+
+    @Headers( "Content-Type: application/json; charset=utf-8")
+    @POST()
+    suspend fun getTagBySerialNumber(@Url url:String,@Body jsonObject: RequestBody,@Header("Authorization")  authorization:String): Response<GetTagsBySerialNoResponseData>
 
     @Headers( "Content-Type: application/json; charset=utf-8")
     @GET("https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/status/{merchantId}/{merchantTransactionId}")

@@ -35,6 +35,25 @@ data class GetTransactionResponseData(
     val message:String?,
     val reponseData:TransactionResponseData?,
 )
+data class UploadTagsResponseData(
+    val status:Boolean,
+    val message:String?,
+//    val reponseData:TransactionResponseData?,
+)
+data class GetTagsBySerialNoResponseData(
+    val status:Boolean,
+    val message:String?,
+    val reponseData:GetTagsBySerialNoResponse?,
+)
+data class GetTagsBySerialNoResponse(
+    val id:String?,
+    val kitNumber:String?,
+    val serialNumber:String?,
+    val profileId:String?,
+    val tagId:String?,
+    val createdOn:String?,
+    val modifiedOn:String?
+)
 data class TransactionResponseData(
     val transactionId:String,
     val callBackUrl:String?,
@@ -104,6 +123,13 @@ data class RollsData(
     val reponseData:ArrayList<RollSResponseData>,
 
 )
+data class CsvJsonObj(
+    val kitNumber:String?,
+    val serialNumber:String?,
+    val profileId:String?,
+    val tagId:String?
+)
+
 data class RollSResponseData(
 
     val roleId:String,

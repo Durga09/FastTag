@@ -7,11 +7,13 @@ import androidx.lifecycle.ViewModel
 import com.agent.fasttag.view.model.*
 import com.agent.fasttag.view.util.Resource
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonObject
 import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONArray
 import org.json.JSONObject
 
 
@@ -40,8 +42,9 @@ class FastTagViewModel(private val fasTagRepository: FasTagRepository): ViewMode
     val loadWalletRequestData = MutableLiveData<Resource<PaymentLoadWalletResponse>>()
     val getTransactionStatusRequestData = MutableLiveData<Resource<GetTransactionStatusResData>>()
     val getGetTransactionsResDataByAgent = MutableLiveData<Resource<GetTransactionsResDataByAgent>>()
-
     val getTransactionIdRequestData = MutableLiveData<Resource<GetTransactionResponseData>>()
+    val uploadTags = MutableLiveData<Resource<UploadTagsResponseData>>()
+    val getTagsbySerailNumber = MutableLiveData<Resource<GetTagsBySerialNoResponseData>>()
 
     var job: Job?=null
     val errorMessage = MutableLiveData<String>()
@@ -119,7 +122,15 @@ class FastTagViewModel(private val fasTagRepository: FasTagRepository): ViewMode
     fun getTransactionsResDataByAgentRequestData(): MutableLiveData<Resource<GetTransactionsResDataByAgent>> {
         return getGetTransactionsResDataByAgent
     }
-
+    fun uploadTagsequestData(): MutableLiveData<Resource<UploadTagsResponseData>> {
+        return uploadTags
+    }
+    fun getTagsBySerailNumberRequestData(): MutableLiveData<Resource<GetTagsBySerialNoResponseData>> {
+        return getTagsbySerailNumber
+    }
+    fun kitResultData(): MutableLiveData<Resource<KitResultData>> {
+        return kitResultData
+    }
 
 
 
@@ -161,7 +172,82 @@ class FastTagViewModel(private val fasTagRepository: FasTagRepository): ViewMode
             }
         }
     }
+    fun uploadTagsReq(jsonObj: JSONArray){
 
+        println("OBJ:: "+jsonObj)
+//        val jsonObject = JSONObject(jsonObj)
+        val request = jsonObj.toString().toRequestBody("application/json".toMediaTypeOrNull());
+
+        CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
+            val response = fasTagRepository.uploadTagsRequest(request)
+            withContext(Dispatchers.Main){
+                response.message()
+
+                println("response code:: ${response.code()}")
+
+                if(response.code()==200){
+
+                    println("response:: $response")
+
+                    uploadTags.postValue(Resource.success(response.body()))
+                    loading.value=false
+                }else if(response.code()==500){
+                    val gson = GsonBuilder()
+                        .setLenient()
+                        .create()
+
+                    var locerr = gson.fromJson(response?.errorBody()?.string(),
+                        ErrorResponse::class.java)
+                    println("errorResponse:: ${locerr.exception}")
+//                    onError("Error errorBody: ${locerr.exception.detailMessage} ")
+                    val resultData = ResultData("false",locerr.exception.detailMessage)
+                    val oTPResponseData = OTPResponseData(resultData)
+                    generateOtpData.postValue(Resource.success(oTPResponseData))
+                }else{
+                    onError("Error : ${response.message()} ")
+
+                }
+            }
+        }
+    }
+    fun getTagsBySerialNumberRequest(jsonObj: String){
+
+        println("OBJ:: "+jsonObj)
+        val jsonObject = JSONObject(jsonObj)
+        val request = jsonObject.toString().toRequestBody("application/json".toMediaTypeOrNull());
+
+        CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
+            val response = fasTagRepository.getTagBySerialNumber(request)
+            withContext(Dispatchers.Main){
+                response.message()
+
+                println("response code:: ${response.code()}")
+
+                if(response.code()==200){
+
+                    println("response:: $response")
+
+                    getTagsbySerailNumber.postValue(Resource.success(response.body()))
+                    loading.value=false
+                }else if(response.code()==500){
+                    val gson = GsonBuilder()
+                        .setLenient()
+                        .create()
+
+                    var locerr = gson.fromJson(response?.errorBody()?.string(),
+                        ErrorResponse::class.java)
+                    println("errorResponse:: ${locerr.exception}")
+//
+                    getTagsbySerailNumber.postValue(Resource.success(response.body()))
+                }else{
+                    onError("Error : ${response.message()} ")
+                    getTagsbySerailNumber.postValue(Resource.success(response.body()))
+
+
+                }
+            }
+        }
+    }
     @SuppressLint("SuspiciousIndentation")
     fun customerRegistration(tenant:String, partnerId:String, partnerToken:String, jsonObj: String){
 

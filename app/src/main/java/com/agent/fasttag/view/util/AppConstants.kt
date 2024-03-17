@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.graphics.Color
 import android.net.ConnectivityManager
+import android.net.Uri
 import android.os.Build
 import android.text.Html
 import android.text.Layout
@@ -19,6 +20,7 @@ import com.agent.fasttag.R
 import com.agent.fasttag.view.model.PersonalDetailsData
 import com.marwaeltayeb.progressdialog.ProgressDialog
 import retrofit2.Retrofit
+import java.io.File
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -42,6 +44,10 @@ object AppConstants {
     val teamLeadRollId="2"
     val superAgentRollId="1"
     var parentId=""
+    var referralCodeVal =150
+    var referralCodeKey =""
+    var amountByTagId =0
+
     var vehicleNumberVal=""
     var baseURL="https://kycuat.yappay.in/kyc/"
     var vehicleRegistrationBaseUrl="https://uat-fleetdrive.m2pfintech.com/core/Yappay/registration-manager/"
@@ -66,6 +72,8 @@ object AppConstants {
     val getAgentsByID="agent/getAgentById"
     val deleteCustomeDetails="customer/deleteCustomer"
     val getOtp="SMSApi/SendOtp"
+    val uploadTags="common/uploadTags"
+    val getTagBySerailNo="common/getTagDetails"
 
     var LoginAuthorization="Basic QWJjZGVmZ2hpams6eHl6QDEyMyM="
     var loginFrom=""
@@ -252,6 +260,17 @@ object AppConstants {
          return result.toString()
 
      }
+    fun createTmpFileFromUri(context: Context, uri: Uri, fileName: String): File? {
+        return try {
+            val stream = context.contentResolver.openInputStream(uri)
+            val file = File.createTempFile(fileName, "", context.filesDir)
+            org.apache.commons.io.FileUtils.copyInputStreamToFile(stream,file)
+            file
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
     fun String.convertDateFormat(dateFormat : String = DATE_FORMAT, actualFormat : String = SERVER_DATE_FORMAT): String{
         val sdf = SimpleDateFormat(actualFormat, Locale.getDefault())
         val convertSdf = SimpleDateFormat(dateFormat, Locale.getDefault())

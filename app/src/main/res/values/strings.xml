@@ -31,11 +31,12 @@
     <string name="vehicle_number">Vehicle Number<font color='#FF6224'>*</font></string>
     <string name="kit_number">Kit Number<font color='#FF6224'>*</font></string>
     <string name="transaction_id">Transaction Id</string>
+    <string name="Select_Profile_Id">Select Profile Id</string>
 
     <string name="Add_kit">Add kit</string>
     <string name="Replace_Kit">Replace Kit</string>
     <string name="select_vehicle_registration_number">Select Vehicle Number<font color='#FF6224'>*</font></string>
-
+    <string name="zero">"ZERO"</string>
     <string name="vehicle_registration_number">Vehicle Registration Number<font color='#FF6224'>*</font></string>
     <string name="upload_vehicle_rc">Upload Vehicle RC<font color='#FF6224'>*</font></string>
     <string name="front_side">Front Side</string>
@@ -51,6 +52,7 @@
     <string name="resend">Resend </string>
     <string name="agent">Agent </string>
     <string name="attached_agent">Attached Agent </string>
+    <string name="upload_csv">Upload CSV</string>
 
     <string name="super_agent">Super Agent </string>
     <string name="team_lead">Team Lead </string>
@@ -66,7 +68,7 @@
     <string name="no_data_available">No Data Available. Please tray again..</string>
     <string name="transactions">Transactions </string>
     <string name="to_payment_gateway">Go to payment gateway </string>
-    <string name="Rs">\u20B9 200</string>
+    <string name="Rs">\u20B9</string>
     <string name="get_referral_code_and_agent_id_from_hd_partner">Get \'Referral Code\' and \'Agent Id \' from HD partner</string>
     <string name="next">Next</string>
     <string name="first_name">First Name<font color='#FF6224'>*</font></string>
@@ -125,6 +127,8 @@
     <string name="old_password">Old Password<font color='#FF6224'>*</font></string>
     <string name="new_password">New Password<font color='#FF6224'>*</font></string>
     <string name="forgot_password">Forgot Password</string>
+    <string name="profile_id">Profile Id</string>
+    <string name="tag_id">Tag Id</string>
 
 
 </resources>

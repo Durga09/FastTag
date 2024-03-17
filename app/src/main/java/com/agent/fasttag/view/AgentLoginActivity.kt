@@ -112,10 +112,10 @@ class AgentLoginActivity : AppCompatActivity() {
             }
         }
         binding.buttonForgotPwd.setOnClickListener {
-            var intent=  Intent(this, PhonePayPaymentGatewayActivity::class.java)
+//            var intent=  Intent(this, PhonePayPaymentGatewayActivity::class.java)
 
-//            var intent=  Intent(this, ForgotPasswordActivity::class.java)
-//            intent.putExtra(getString(R.string.login_from),getString(R.string.agent))
+            var intent=  Intent(this, ForgotPasswordActivity::class.java)
+            intent.putExtra(getString(R.string.login_from),getString(R.string.agent))
             startActivity(intent)
             AppConstants.slideToRightAnim(this)
         }

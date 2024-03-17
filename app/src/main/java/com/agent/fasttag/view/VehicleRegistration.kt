@@ -68,6 +68,43 @@ class VehicleRegistration : AppCompatActivity() {
         binding.etVehicleClassInput.setOnClickListener {
             openDialog(getString(R.string.select_vehicle_type),vehicleClassArr)
         }
+        binding.validateReferralCode.setOnClickListener {
+            var referralCodeKey=binding.referralCodeInput.text.toString()
+            AppConstants.referralCodeKey=referralCodeKey
+
+            when (referralCodeKey){
+
+                "ZERO"  -> AppConstants.referralCodeVal=150
+                "HUNDRED"  -> AppConstants.referralCodeVal=100
+                "TWO HUNDRED"  -> AppConstants.referralCodeVal=200
+                "THREE HUNDRED"  -> AppConstants.referralCodeVal=300
+                "FOUR HUNDRED"  -> AppConstants.referralCodeVal=400
+                "FIVE HUNDRED"  -> AppConstants.referralCodeVal=500
+
+            }
+
+            if(AppConstants.referralCodeVal==150 || AppConstants.referralCodeVal==100 || AppConstants.referralCodeVal==200
+                ||AppConstants.referralCodeVal==300 || AppConstants.referralCodeVal == 400 || AppConstants.referralCodeVal == 500){
+                Toast.makeText(this,"Referral code added success",Toast.LENGTH_SHORT).show()
+            }else{
+                Toast.makeText(this,"Please Enter Referral Code ",Toast.LENGTH_SHORT).show()
+            }
+
+           /* if(referralCodeVal=="ZERO" ){
+                AppConstants.referralCodeVal=150
+            }
+             else if( referralCodeVal =="HUNDRED" ){
+                AppConstants.referralCodeVal=100
+            }
+             else if( referralCodeVal =="TWO HUNDRED" ){
+                AppConstants.referralCodeVal=200
+            }
+            else if(referralCodeVal == "THREE HUNDRED"){
+                AppConstants.referralCodeVal=300
+            }*/
+
+
+        }
 
     }
 
@@ -106,9 +143,12 @@ class VehicleRegistration : AppCompatActivity() {
         if(phoneNumber==""){
             Toast.makeText(this,"Please enter phone number",Toast.LENGTH_SHORT).show()
         }
-        else if(vehicleClass==""){
-            Toast.makeText(this,"Please select vehicle class",Toast.LENGTH_SHORT).show()
-
+//        else if(vehicleClass==""){
+//            Toast.makeText(this,"Please select vehicle class",Toast.LENGTH_SHORT).show()
+//
+//        }
+        else if(AppConstants.referralCodeKey==""){
+            Toast.makeText(this,"Please enter referral code",Toast.LENGTH_SHORT).show()
         }
        else {
             vehicleClass = vehicleClass.replace(" ", "_")

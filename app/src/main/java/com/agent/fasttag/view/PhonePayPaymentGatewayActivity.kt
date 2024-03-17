@@ -72,6 +72,7 @@ class PhonePayPaymentGatewayActivity: AppCompatActivity() {
     var TRANSACTION_ID_BY_TRSACTIONS_HIST=""
     private lateinit var binding: ActivityPhonePayPaymentGatewayBinding
 
+
     private fun getInstalledUPIApps(): ArrayList<String>? {
         val upiList: ArrayList<String> = ArrayList()
         val uri: Uri = Uri.parse(String.format("%s://%s", "upi", "pay"))
@@ -86,19 +87,19 @@ class PhonePayPaymentGatewayActivity: AppCompatActivity() {
         return upiList
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPhonePayPaymentGatewayBinding.inflate(layoutInflater)
         setContentView(binding.root)
         PhonePe.init(this,PhonePeEnvironment.SANDBOX,MERCHANT_ID,"")
         loginFrom = AppConstants.loginFrom
-
+        binding.tvPhonePayAmount.text =getString(R.string.Rs)+" "+(AppConstants.referralCodeVal*100)
         var string_signature = PhonePe.getPackageSignature()
          fasTagPref = FasTagSharedPreference.customPreference(this, FasTagSharedPreference.CUSTOM_PREF_NAME)
          parentId=fasTagPref.USER_parentId!!
         loginUserPhoneNumber=fasTagPref.USER_phoneNumber!!
         var roleId=fasTagPref.USER_roleId
-
         binding.roleName.text = fasTagPref.USER_roleName
         binding.userName.text = fasTagPref.USER_firstName+" "+fasTagPref.USER_lastName
 
@@ -120,13 +121,19 @@ class PhonePayPaymentGatewayActivity: AppCompatActivity() {
 
             }*/
         }
+
         setupVehicleRegviewModelViewModel()
         CallObserveuploadVehicleRegistration()
+        if(AppConstants.referralCodeKey==getString(R.string.zero)){
+
+            getTransactionId()
+
+        }
     }
     private fun initiatePhonePeRequest(MERCHANT_T_ID:String,callBackUrl:String){
         MERCHANT_TID = MERCHANT_T_ID
         var requestData= PhonePayRequest(MERCHANT_ID,MERCHANT_T_ID,
-            "MUID123",20000,
+            "MUID123",AppConstants.referralCodeVal,
             callBackUrl.replace("\\/","/"),loginUserPhoneNumber,
             PaymentInstrument(paymentType))
 
@@ -170,8 +177,15 @@ class PhonePayPaymentGatewayActivity: AppCompatActivity() {
     }
     fun getTransactionId(){
         AppConstants.launchSunsetDialog(this)
+        var amount=0
+        var status="COMPLETED"
+        if(AppConstants.referralCodeKey!=getString(R.string.zero)) {
+             amount=AppConstants.referralCodeVal
+             status="Initiated"
+        }
         var requestData= GetTransactionIdRequestJson(fasTagPref.USER_parentId!!,fasTagPref.USER_agentID!!,
-            fasTagPref.USER_phoneNumber!!,fasTagPref.USER_phoneNumber!!,"TS10FB9015","Initiated","200")
+            fasTagPref.USER_phoneNumber!!,fasTagPref.USER_phoneNumber!!,AppConstants.vehicleNumberVal,status,""+amount)
+
 //        var requestData= GetTransactionIdRequestJson("c59a93f1-0655-4c92-b54c-6ca6637998ff","d63060b6-c5cf-4424-837f-b027a413277a",
 //            "9874563210","9874563210","TS10FB9015","Initiated","200")
 
@@ -217,7 +231,7 @@ class PhonePayPaymentGatewayActivity: AppCompatActivity() {
             when (it.status) {
                 Status.SUCCESS -> {
                     if(it.data?.result!=null) {
-                        AppConstants.showMessageAlert(this, "LoadWalletRequestData  Success"+it.data?.result?.txId)
+                        statusPendingMessage( "LoadWalletRequestData  Success"+it.data?.result?.txId)
                     }else{
                         AppConstants.showMessageAlert(this, it.data?.exception?.detailMessage)
 
@@ -239,8 +253,17 @@ class PhonePayPaymentGatewayActivity: AppCompatActivity() {
                 Status.SUCCESS -> {
                     if(it.data?.status==true) {
 //                        AppConstants.showMessageAlert(this, it.data?.reponseData?.transactionId)
+                        if(AppConstants.referralCodeKey==getString(R.string.zero)){
+                            AppConstants.launchSunsetDialog(this)
+                            var requestBody = generateLoadWalletRequestJson()
+                            vehicleRegviewModel.paymentLoadWaletRequest( AppConstants.tenant_M2P,requestBody )
+                        }else {
 
-                     initiatePhonePeRequest(it.data?.reponseData?.transactionId!!,it.data?.reponseData?.callBackUrl!!)
+                            initiatePhonePeRequest(
+                                it.data?.reponseData?.transactionId!!,
+                                it.data?.reponseData?.callBackUrl!!
+                            )
+                        }
 
                     }else{
                         AppConstants.showMessageAlert(this, it.data?.message)
@@ -284,7 +307,7 @@ class PhonePayPaymentGatewayActivity: AppCompatActivity() {
                                     AppConstants.launchSunsetDialog(this)
                                 }
 
-                                TRASACTION_STATUS_RETRY_NUMBER = +TRASACTION_STATUS_RETRY_NUMBER + 1
+                                TRASACTION_STATUS_RETRY_NUMBER += 1
                             }
                         }
                     }else{
@@ -395,7 +418,7 @@ class PhonePayPaymentGatewayActivity: AppCompatActivity() {
    private fun generateLoadWalletRequestJson():RequestBody{
        var externalTransactionId=System.currentTimeMillis()
         var requestData= LoadWalletRequest("LQFLEET10001",loginUserPhoneNumber,"GENERAL",
-            "transferfunds","200","M2C","LQFLEET","LQFLEET",
+            "transferfunds",""+AppConstants.amountByTagId,"M2C","LQFLEET","LQFLEET",
             "MOBILE",""+externalTransactionId,"1234")
         val agentRequestJsonData = Gson().toJson(requestData)
         val jsonObject = JSONObject(agentRequestJsonData)

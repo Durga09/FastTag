@@ -26,7 +26,7 @@
         android:background="@drawable/green_button_corner">
 
         <TextView
-            android:id="@+id/tv_amount"
+            android:id="@+id/tv_phone_pay_amount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:fontFamily="@font/montserrat_semibold"
@@ -39,7 +39,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_below="@+id/tv_amount"
+            android:layout_below="@+id/tv_phone_pay_amount"
             android:gravity="bottom"
             android:padding="@dimen/_5sdp"
             android:background="@color/light_grey"

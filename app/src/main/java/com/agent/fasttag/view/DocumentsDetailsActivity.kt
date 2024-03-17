@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
@@ -15,6 +16,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.FrameLayout
@@ -37,8 +39,6 @@ import com.agent.fasttag.view.model.*
 import com.agent.fasttag.view.util.AppConstants
 import com.agent.fasttag.view.util.FasTagSharedPreference
 import com.agent.fasttag.view.util.FasTagSharedPreference.USER_agentID
-import com.agent.fasttag.view.util.FasTagSharedPreference.USER_parentId
-import com.agent.fasttag.view.util.FasTagSharedPreference.USER_roleId
 import com.agent.fasttag.view.util.Status
 import com.agent.fasttag.view.viewmodel.FasTagRepository
 import com.agent.fasttag.view.viewmodel.FasTagViewModelFactory
@@ -69,8 +69,11 @@ class DocumentsDetailsActivity : AppCompatActivity() {
     var vehicleNumberVal = ""
     var scanned_kit_number=""
     var kit_number=""
+    var mProfileId=""
+    var mTagId=""
     var oldKitNumber=""
     var newKitNumber=""
+    var newKitNumberForReplace=""
     var saveCustomerDetails="not done"
     var addReplaceRegistrationNumber=""
     var kitNumberUpdate=false
@@ -83,6 +86,15 @@ class DocumentsDetailsActivity : AppCompatActivity() {
     lateinit var vehicleRegviewModel:FastTagViewModel
     //    lateinit var unLockKitviewModel:FastTagViewModel
     var SelectAddReplace=""
+    val profilerIdsArry:Map<String, String> = mapOf(
+        "VC4" to "MC4 Car/Jeep/Van",
+        "VC4" to "MC20 Tata Ace/Similar Light Commercial Vehicle", "VC5" to "MC5 Light Commercial Vehicle",
+        "VC5" to "MC9 Mini Bus", "VC6" to "MC8 Bus (3 Axie)", "VC6" to "MC11 Truck(3 Axie)/Light Commercial Vehicle(3 Axie)",
+        "VC7" to "MC7 BUs(2 Axie)","VC7" to "MC10 Truck(2 Axie)", "VC12" to "MC12 Truck (4 Axie)","VC12" to "MC13 Truck(5 Axie)",
+        "VC12" to "MC14 Truck(6 Axie","VC15" to "MC15 Truck(7 Axie & above)","VC16" to "MC16 Earth Moving Machinery",
+        "VC16" to "MC17 Heavy Construction Machinery")
+    val mapWithDuplicateKeys=mutableListOf<Pair<String,String>>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDocumentsDetailsBinding.inflate(layoutInflater)
@@ -91,6 +103,20 @@ class DocumentsDetailsActivity : AppCompatActivity() {
         initView()
         setupScanner()
         setupVehicleRegviewModelViewModel()
+        mapWithDuplicateKeys.add( "VC4" to "MC4 Car/Jeep/Van")
+        mapWithDuplicateKeys.add( "VC4" to "MC20 Tata Ace/Similar Light Commercial Vehicle")
+        mapWithDuplicateKeys.add( "VC5" to "MC5 Light Commercial Vehicle")
+        mapWithDuplicateKeys.add( "VC6" to "MC11 Truck(3 Axie)/Light Commercial Vehicle(3 Axie)")
+        mapWithDuplicateKeys.add( "VC7" to "MC7 BUs(2 Axie)")
+        mapWithDuplicateKeys.add( "VC7" to "MC10 Truck(2 Axie)")
+        mapWithDuplicateKeys.add( "VC12" to "MC12 Truck (4 Axie)")
+        mapWithDuplicateKeys.add( "VC12" to "MC12 Truck (5 Axie)")
+        mapWithDuplicateKeys.add( "VC12" to "MC14 Truck(6 Axie")
+        mapWithDuplicateKeys.add( "VC15" to "MC15 Truck(7 Axie & above)")
+        mapWithDuplicateKeys.add("VC16" to "MC16 Earth Moving Machinery")
+        mapWithDuplicateKeys.add("VC16" to "MC16 Earth Moving Machinery")
+        mapWithDuplicateKeys.add("VC16" to "MC17 Heavy Construction Machinery")
+
 
 
         CallObserveuploadVehicleRegistration()
@@ -110,6 +136,7 @@ class DocumentsDetailsActivity : AppCompatActivity() {
         documentsTypeArr.add("VoterId")
         documentsTypeArr.add("Aadhar card")
         documentsTypeArr.add("Diving License")
+        AppConstants.entityType=getString(R.string.TRUCK_CORPORATE)
         addOrReplaceArr.add(getString(R.string.Add_kit))
         addOrReplaceArr.add(getString(R.string.Replace_Kit))
         personalDetailsData =AppConstants.personalDetail!!
@@ -151,6 +178,13 @@ class DocumentsDetailsActivity : AppCompatActivity() {
 
 
     }
+    fun profileIdReferenceImage(view:View){
+        val factory = LayoutInflater.from(this)
+        val view: View = factory.inflate(R.layout.proile_image_dialog, null)
+        val dialog = Dialog(this)
+        dialog.setContentView(view)
+        dialog.show()
+    }
     @SuppressLint("SuspiciousIndentation")
     fun next(view:View){
 
@@ -166,6 +200,9 @@ class DocumentsDetailsActivity : AppCompatActivity() {
         AppConstants.vehicleNumberVal =vehicleNumberVal
         scanned_kit_number = binding.scannedKtNumber.text.toString().trim()
         kit_number = binding.etKitNumberInput.text.toString().trim()
+        mProfileId = binding.etProfileIdInput.text.toString().trim().split(" ")[0]
+        mTagId = binding.etTagIdInput.text.toString().trim()
+        println("mProfileId::$mProfileId")
 
         SelectAddReplace=binding.etSelectAddReplaceKitInput.text.toString()
         if(SelectAddReplace==getString(R.string.Add_kit)) {
@@ -176,23 +213,41 @@ class DocumentsDetailsActivity : AppCompatActivity() {
                   Toast.makeText(this, "Please bar code number number", Toast.LENGTH_SHORT).show()
 
               } */
-            else if (vehicleNumberVal == "") {
+            else if(mTagId == ""){
+                Toast.makeText(this, "Please enter tag id", Toast.LENGTH_SHORT).show()
+
+            }
+            else if(mProfileId == ""){
+                Toast.makeText(this, "Please select profile Id", Toast.LENGTH_SHORT).show()
+
+            }
+           else if (vehicleNumberVal == "") {
                 Toast.makeText(this, "Please enter vehicle number", Toast.LENGTH_SHORT).show()
 
-            } else if (rcBackSideFile == null) {
+            }/* else if (rcBackSideFile == null) {
                 Toast.makeText(this, "Please select RC back side image", Toast.LENGTH_SHORT).show()
 
             } else if (customerFile == null) {
                 Toast.makeText(this, "Please select customer image", Toast.LENGTH_SHORT).show()
 
-            } else {
+            }*/
+
+            else {
+                if(mTagId=="VC4"){
+                    AppConstants.amountByTagId=150
+                }else{
+                    AppConstants.amountByTagId=100
+
+                }
 
                 updateCustomerdetails(true,kit_number,vehicleNumberVal)
+
 
             }
         }else{
             oldKitNumber=binding.etOldKitNumberInput.text.toString().trim()
             newKitNumber=binding.etNewKitNumberInput.text.toString().trim()
+            var replaceProfile_id=binding.etReplaceProfileIdInput.text.toString().trim()
 
             if(oldKitNumber==""){
                 Toast.makeText(this, "Please enter old kit number", Toast.LENGTH_SHORT).show()
@@ -203,7 +258,12 @@ class DocumentsDetailsActivity : AppCompatActivity() {
             }else if(oldKitNumber==newKitNumber){
                 Toast.makeText(this, "Old and new kit numbers should not same", Toast.LENGTH_SHORT).show()
 
-            }else{
+            }
+            else if(replaceProfile_id == ""){
+                Toast.makeText(this, "Please select profile Id", Toast.LENGTH_SHORT).show()
+
+            }
+            else{
                 AppConstants.launchSunsetDialog(this)
                 var unlockData = TagClosureReqJson(oldKitNumber,"06","add")
                 val jsonData = Gson().toJson(unlockData)
@@ -258,7 +318,7 @@ class DocumentsDetailsActivity : AppCompatActivity() {
         var agentId=fasTagPref.USER_agentID!!
 
         var requestData= UpdateCustomerRequestJson(agentId,personalDetailsData.firstName,
-            personalDetailsData.emailAddress,AppConstants.phoneNumber.substring(3),personalDetailsData.gender,personalDetailsData.pincode,personalDetailsData.state,AppConstants.country,AppConstants.entityType,AppConstants.entityId,
+            personalDetailsData.emailAddress,AppConstants.phoneNumber.substring(3),personalDetailsData.gender,personalDetailsData.pincode,personalDetailsData.state,AppConstants.country,""+AppConstants.entityType,AppConstants.entityId,
             "KYC123",personalDetailsData.dob,personalDetailsData.address1,personalDetailsData.documentType,personalDetailsData.documentNumber,
             "0000777",AppConstants.kycStatus,kitNumber,kitNumber,vehicleNumber,"0","0","Approved",personalDetailsData.customerId,isAdditionalVehicle)
         val loginRequestJsonData = Gson().toJson(requestData)
@@ -334,6 +394,62 @@ class DocumentsDetailsActivity : AppCompatActivity() {
 
         }
 
+        vehicleRegviewModel.getTagsBySerailNumberRequestData().observe(this){
+            AppConstants.cancelSunsetDialog()
+            when(it.status){
+                Status.SUCCESS ->{
+
+                    if(it.data?.message=="Success"){
+//                        AppConstants.showMessageAlert(this,it.data.reponseData?.kitNumber)
+                        var profileID=it.data.reponseData?.profileId!!
+                        val valuesMatchingKEY1 = mapWithDuplicateKeys.filter { it.first== profileID }.map{it.second}
+
+
+                        unlockKit(it.data.reponseData?.kitNumber!!)
+                        newKitNumberForReplace=it.data.reponseData?.kitNumber!!
+//                        binding.etProfileIdInput.setText(profileID)
+
+                        binding.etTagIdInput.setText(it.data.reponseData?.tagId!!)
+                        binding.etProfileIdInput.setOnClickListener {
+                            println("profilerIdsArry:: $valuesMatchingKEY1")
+
+                            if(valuesMatchingKEY1.isNotEmpty()) {
+                                openDialog(
+                                    getString(R.string.Select_Profile_Id),
+                                    valuesMatchingKEY1 as ArrayList<String>
+                                )
+                            }
+                        }
+                        binding.etReplaceProfileIdInput.setOnClickListener {
+                            println("profilerIdsArry:: $valuesMatchingKEY1")
+
+                            if(valuesMatchingKEY1.isNotEmpty()) {
+                                openDialog(
+                                    getString(R.string.Select_Profile_Id),
+                                    valuesMatchingKEY1 as ArrayList<String>
+                                )
+                            }
+                        }
+
+                        binding.etReplaceTagIdInput.setText(it.data.reponseData?.tagId!!)
+
+                    }else {
+                    AppConstants.showMessageAlert(this,it.data?.message)
+                    }
+
+                }
+                Status.LOADING -> {
+                    AppConstants.launchSunsetDialog(this)
+
+                }
+                Status.ERROR -> {
+                    //Handle Error
+                    AppConstants.cancelSunsetDialog()
+                    Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+
     }
     fun getTagLisDataObserver() {
 //                binding.scannedKtNumber.setText("34161FA82073E764D9E85321")
@@ -347,7 +463,7 @@ class DocumentsDetailsActivity : AppCompatActivity() {
                  AppConstants.country,stateVal,cityVal,addressLine1Val,addressLine2Val,addressLine1Val,
                  AppConstants.phoneNumber,lastNameVal,firstNameVal)*/
                     binding.etOldKitNumber.visibility = View.VISIBLE
-                    binding.etNewKitNumber.visibility = View.VISIBLE
+                    binding.llNewKitDetails.visibility = View.VISIBLE
                     binding.btnNext.visibility = View.VISIBLE
 
                     val adapter = ArrayAdapter<String>(
@@ -374,7 +490,7 @@ class DocumentsDetailsActivity : AppCompatActivity() {
             }else{
                 Toast.makeText(this, it.data!!.exception.exception.detailMessage, Toast.LENGTH_SHORT).show()
                 binding.etOldKitNumber.visibility=View.GONE
-                binding.etNewKitNumber.visibility=View.GONE
+                binding.llNewKitDetails.visibility=View.GONE
                 binding.btnNext.visibility = View.GONE
 
             }
@@ -404,11 +520,12 @@ class DocumentsDetailsActivity : AppCompatActivity() {
                 Toast.makeText(this, "Tag Closure Success.", Toast.LENGTH_SHORT).show()
                 if(AppConstants.isNetworkAvailable(this)) {
                     AppConstants.launchSunsetDialog(this)
+                    var replaceProfile_id=binding.etReplaceProfileIdInput.text.toString().split(" ")[0]
                     var unlockData = ReplaceTagReqJson(
                         addReplaceRegistrationNumber,
                         oldKitNumber,
-                        newKitNumber,
-                        "VC4"
+                        newKitNumberForReplace,
+                        replaceProfile_id
                     )
                     val jsonData = Gson().toJson(unlockData)
                     vehicleRegviewModel.tagReplace(
@@ -425,6 +542,8 @@ class DocumentsDetailsActivity : AppCompatActivity() {
                  val jsonData = Gson().toJson(unlockData)
                  vehicleRegviewModel.tagReplace(AppConstants.tenant,AppConstants.authorization,jsonData)*/
                 Toast.makeText(this, "Tag close failed", Toast.LENGTH_SHORT).show()
+
+
 
             }
         }
@@ -444,7 +563,33 @@ class DocumentsDetailsActivity : AppCompatActivity() {
     fun replaceTagObserver() {
 //                binding.scannedKtNumber.setText("34161FA82073E764D9E85321")
 
+        vehicleRegviewModel.kitResultData().observe(this) {
 
+            println("kitResultData:: "+it)
+
+            if(it.data!!.exception==null) {
+                Toast.makeText(this, "Kit number unlocked success.", Toast.LENGTH_SHORT).show()
+                /* AppConstants.personalDetail= PersonalDetailsData(pincodeVal,
+                 AppConstants.country,stateVal,cityVal,addressLine1Val,addressLine2Val,addressLine1Val,
+                 AppConstants.phoneNumber,lastNameVal,firstNameVal)*/
+            }else{
+                Toast.makeText(this, it.data!!.exception.detailMessage, Toast.LENGTH_SHORT).show()
+            }
+        }
+        vehicleRegviewModel.errorMessage.observe(this) {
+
+            AppConstants.cancelSunsetDialog()
+            Toast.makeText(this, "Kit number unlocked not success. Please try again..", Toast.LENGTH_SHORT).show()
+            vehicleRegviewModel.loading.observe(this, Observer {
+                if (!it) {
+                    AppConstants.cancelSunsetDialog()
+
+                    /* pd?.dismiss()
+         pd=null*/
+                }
+            })
+
+        }
         vehicleRegviewModel.replaceTag().observe(this) {
             AppConstants.cancelSunsetDialog()
             if(it.data!!.exception==null) {
@@ -475,40 +620,17 @@ class DocumentsDetailsActivity : AppCompatActivity() {
 
         }
     }
-    fun unlockKit() {
+    fun unlockKit(kitNumber:String) {
 //                binding.scannedKtNumber.setText("34161FA82073E764D9E85321")
 
-        var kitNo = binding.scannedKtNumber.text.toString()
+        var kitNo =kitNumber
+        println("kitNumber:: "+kitNumber)
         if (kitNo != "") {
             var unlockData = UnlockKitReqJson(kitNo, "01", "REMOVE")
             val jsonData = Gson().toJson(unlockData)
-            vehicleRegviewModel.kitResultData.observe(this) {
 
-                if(it.data!!.exception==null) {
-                    Toast.makeText(this, "Success.", Toast.LENGTH_SHORT).show()
-                    /* AppConstants.personalDetail= PersonalDetailsData(pincodeVal,
-                     AppConstants.country,stateVal,cityVal,addressLine1Val,addressLine2Val,addressLine1Val,
-                     AppConstants.phoneNumber,lastNameVal,firstNameVal)*/
-                }else{
-                    Toast.makeText(this, it.data!!.exception.detailMessage, Toast.LENGTH_SHORT).show()
-                }
-            }
-            vehicleRegviewModel.errorMessage.observe(this) {
-
-                AppConstants.cancelSunsetDialog()
-                Toast.makeText(this, "Please try again..", Toast.LENGTH_SHORT).show()
-                vehicleRegviewModel.loading.observe(this, Observer {
-                    if (!it) {
-                        AppConstants.cancelSunsetDialog()
-
-                        /* pd?.dismiss()
-             pd=null*/
-                    }
-                })
-
-            }
             if(AppConstants.isNetworkAvailable(this)) {
-                vehicleRegviewModel.unLockKit(AppConstants.YESFLEET, jsonData)
+                vehicleRegviewModel.unLockKit(AppConstants.tenant, jsonData)
             }else{
                 AppConstants.showNoInternetConnectionMessageAlert(this)
             }
@@ -648,7 +770,7 @@ class DocumentsDetailsActivity : AppCompatActivity() {
                 var imageUri: Uri = data.data!!
                 var filePath1:File=File(imageUri.path)
 //                 var filePath=FileUtils.getPath(this,imageUri)
-                var filePath = createTmpFileFromUri(this,imageUri,filePath1.name)
+                var filePath = AppConstants.createTmpFileFromUri(this,imageUri,filePath1.name)
                 val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, imageUri)
                 if (filePath != null) {
                     setImage(rotateImage(bitmap,0f),filePath)
@@ -663,7 +785,7 @@ class DocumentsDetailsActivity : AppCompatActivity() {
                 // If QRCode contains data.
                 try {
                     binding.scannedKtNumber.setText(result.contents)
-                    unlockKit()
+                    binding.etKitNumberInput.setText(result.contents)
                     Toast.makeText(this,result.contents,Toast.LENGTH_SHORT).show()
                 } catch (e: JSONException) {
                     e.printStackTrace()
@@ -721,20 +843,49 @@ class DocumentsDetailsActivity : AppCompatActivity() {
         val alertDialog: AlertDialog = shareAlertBuilder.create()
         layoutDailogListViewBinding.listView.adapter= CommanAdapter(this,listArr)
         layoutDailogListViewBinding.listView.setOnItemClickListener { parent, view, position, id ->
+
+            SelectAddReplace=""
+
+
             if(dropFrom == getString(R.string.select_document_type)){
 //                binding.etSelectDocumentTypeInput.setText(listArr[position])
-            }else{
+            }
+            else if(dropFrom == getString(R.string.Select_Profile_Id)){
+                binding.etProfileIdInput.setText(listArr[position])
+                binding.etReplaceProfileIdInput.setText(listArr[position])
+            }
+            else{
                 binding.etSelectAddReplaceKitInput.setText(listArr[position])
                 if(listArr[position]==getString(R.string.Add_kit)){
                     binding.addKitContentLayout.visibility=View.VISIBLE
                     binding.replaceKitContentLayout.visibility=View.GONE
                     binding.btnNext.visibility = View.VISIBLE
+                    binding.llscanbar.visibility=View.VISIBLE
+
+                    binding.etProfileIdInput.setText("")
+                    binding.etReplaceProfileIdInput.setText("")
+                    binding.etReplaceTagIdInput.setText("")
+
+
+                    binding.etKitNumberInput.setText("")
+                    binding.etReplaceTagIdInput.setText("")
+                    binding.etTagIdInput.setText("")
+                    binding.etReplaceProfileIdInput.setText("")
 
                 }else{
                     binding.addKitContentLayout.visibility=View.GONE
                     binding.replaceKitContentLayout.visibility=View.VISIBLE
                     binding.btnNext.visibility = View.GONE
+                    binding.llscanbar.visibility=View.GONE
 
+                    binding.etProfileIdInput.setText("")
+                    binding.etReplaceProfileIdInput.setText("")
+                    binding.etReplaceTagIdInput.setText("")
+
+                    binding.etKitNumberInput.setText("")
+                    binding.etReplaceTagIdInput.setText("")
+                    binding.etTagIdInput.setText("")
+                    binding.etReplaceProfileIdInput.setText("")
                 }
 
             }
@@ -786,11 +937,13 @@ class DocumentsDetailsActivity : AppCompatActivity() {
             documents=arrayListOf(documents),
             countryofIssue = "IND",
             idType = AppConstants.RC_NUMBER,
-            entityType = AppConstants.entityType,
+//            entityType = AppConstants.entityType,
+            entityType = "TRUCK_CORPORATE",
+
             color = AppConstants.color,
             kitNo = kit_number,
-            profileId = "VC4",
-            tagId = "VC4",
+            profileId = mProfileId,
+            tagId = mTagId,
             entityId = vehicleNumberVal)
 
         val jsonData = Gson().toJson(vehicleRegReqJsonData)
@@ -813,21 +966,44 @@ class DocumentsDetailsActivity : AppCompatActivity() {
     public fun scanBarCode(view:View){
         performAction()
     }
+    public fun getTagBySerialNumber(view:View){
+//        binding.etKitNumberInput.setText("652210-108-1034162")
+         binding.etProfileIdInput.setText("")
+         binding.etTagIdInput.setText("")
+        var serialNumber= binding.etKitNumberInput.text.toString()
+        getTagsBySerialNumberRequest(serialNumber)
+    }
+    public fun getTagBySerialNumberForReplace(view:View){
+//        binding.etKitNumberInput.setText("652210-108-1034162")
+        var serialNumber= binding.etNewKitNumberInput.text.toString()
+        getTagsBySerialNumberRequest(serialNumber)
+    /*    AppConstants.launchSunsetDialog(this)
+        if(serialNumber==null || serialNumber==""){
+            Toast.makeText(this,"Please enter serial number",Toast.LENGTH_SHORT).show()
+        }else {
+            val serialNumberReq = GetTagListReqBySerialNumberJson(serialNumber)
+            val jsonData = Gson().toJson(serialNumberReq)
+
+            vehicleRegviewModel.getTagsBySerialNumberRequest(jsonData)
+        }*/
+    }
+    private fun getTagsBySerialNumberRequest(serialNumber:String){
+        AppConstants.launchSunsetDialog(this)
+//        var serialNumber= binding.etKitNumberInput.text.toString()
+        if(serialNumber==null || serialNumber==""){
+            Toast.makeText(this,"Please enter serial number",Toast.LENGTH_SHORT).show()
+        }else {
+            val serialNumberReq = GetTagListReqBySerialNumberJson(serialNumber)
+            val jsonData = Gson().toJson(serialNumberReq)
+
+            vehicleRegviewModel.getTagsBySerialNumberRequest(jsonData)
+        }
+    }
     private fun performAction() {
         // Code to perform action when button is clicked.
         qrScanIntegrator?.initiateScan()
     }
-    fun createTmpFileFromUri(context: Context, uri: Uri, fileName: String): File? {
-        return try {
-            val stream = context.contentResolver.openInputStream(uri)
-            val file = File.createTempFile(fileName, "", context.filesDir)
-            org.apache.commons.io.FileUtils.copyInputStreamToFile(stream,file)
-            file
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-    }
+
     private fun showVehicleNumbersBottomSheet(vehicleLeadsResponseData: ArrayList<VehicleData>?){
         val dialog = BottomSheetDialog(this)
         println("showTeamLeadsBottomSheet ::"+vehicleLeadsResponseData)
