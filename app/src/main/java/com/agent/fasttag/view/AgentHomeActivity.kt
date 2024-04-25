@@ -2,6 +2,7 @@ package com.agent.fasttag.view
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.ContentResolver
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -23,18 +24,14 @@ import androidx.lifecycle.ViewModelProvider
 import com.agent.fasttag.CreateAgentActivity
 import com.agent.fasttag.R
 import com.agent.fasttag.databinding.ActivityAgentHomeBinding
+import com.agent.fasttag.encript.TestEncryptionNew
 import com.agent.fasttag.view.api.RetrofitService
 import com.agent.fasttag.view.model.CsvJsonObj
+import com.agent.fasttag.view.model.GetTagListReqJson
 import com.agent.fasttag.view.util.AppConstants
 import com.agent.fasttag.view.util.FasTagSharedPreference
 import com.agent.fasttag.view.util.FasTagSharedPreference.USER_USERNAME
 import com.agent.fasttag.view.util.FasTagSharedPreference.USER_agentID
-import com.agent.fasttag.view.util.FasTagSharedPreference.USER_email
-import com.agent.fasttag.view.util.FasTagSharedPreference.USER_firstName
-import com.agent.fasttag.view.util.FasTagSharedPreference.USER_lastName
-import com.agent.fasttag.view.util.FasTagSharedPreference.USER_parentId
-import com.agent.fasttag.view.util.FasTagSharedPreference.USER_phoneNumber
-import com.agent.fasttag.view.util.FasTagSharedPreference.USER_roleId
 import com.agent.fasttag.view.util.FasTagSharedPreference.USER_roleName
 import com.agent.fasttag.view.util.FasTagSharedPreference.clear
 import com.agent.fasttag.view.util.Status
@@ -42,10 +39,10 @@ import com.agent.fasttag.view.viewmodel.FasTagRepository
 import com.agent.fasttag.view.viewmodel.FasTagViewModelFactory
 import com.agent.fasttag.view.viewmodel.FastTagViewModel
 import com.google.gson.Gson
-import com.google.gson.JsonArray
 import org.json.JSONArray
-import org.json.JSONObject
+import java.io.BufferedReader
 import java.io.File
+import java.io.FileReader
 import java.util.*
 
 
@@ -73,7 +70,7 @@ class AgentHomeActivity : AppCompatActivity() {
 
     }
     private fun setupViewModel() {
-        retrofitService = RetrofitService.getInstance(AppConstants.baseURL)
+        retrofitService = RetrofitService.getInstance(AppConstants.SSLTestBaseUrl)
         var repository = FasTagRepository(retrofitService!!)
         viewModel = ViewModelProvider(
             this,
@@ -110,6 +107,9 @@ class AgentHomeActivity : AppCompatActivity() {
         }
 
     }
+    fun getRawUri(filename: String): Uri? {
+        return Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + File.pathSeparator + File.separator + packageName + "/raw/" + filename)
+    }
     @RequiresApi(Build.VERSION_CODES.O)
     private fun initView(){
 //        binding.headerLayout.tvToolbarHederTitle.visibility=View.VISIBLE
@@ -117,6 +117,73 @@ class AgentHomeActivity : AppCompatActivity() {
 //        binding.headerLayout.ivToolBarBack.visibility=View.VISIBLE
 //        binding.headerLayout.tvToolbarHederTitle.text=getString(R.string.vehicle_details)
 //        binding.drawerLayout.closeDrawers()
+        var body= "aeOa/hedibdCnUQpyopkTzHnCu2uDclmgZV2NVu4eEbgyZT6feF+IaD2mHqEm3OMuCt2H8v0DWs8GEpQI5sMLdc+H4GQa9GuUjF0HlR+q2HOM1Cyh23y7ytFSA539r9LDL0FjmjyyY77dirGu32Mhw3VlcGohZXXYVlqhtWzKQhXmVu0DWWoJuHES5t7KSTCqwQVw/hsTOrEbM5Nlj9MHcRO3uCCKuv4CVgrARpZRkfjbgf/oKXz80xlB8i2kiI2sNsQqMjXiCHkc9ki9Vq3UGKioDQNti9tZUWfYUsJB0cSjNdJylXEviCe3oMvUeSsW59K0GALj9/hpkp4pCD5JA7QaIdP3Ub8wTpKUA+LocXlXcMTO/6yjmKqOnluFORrnSMCFdi62LnTGsyGGfW/AP+mZlkVniWM90PN9OwoAH4oPNK5Mjc3xk7LWCreN0wrMsFCMHcimycsysA95+g8YehkMXb1OlaqsbJfi23Ls8+sguV9crjk9m+UgjbuxLco"
+        var key ="AFikoNDmt3HP0taGDb18DKI++LPugciAMHkIMmLH0cMz1ON2tzM2u8LAxkC1Su+fmC0ZTqSGxXVfO74GhbIc0uzUuDoeINlB8NljJLDRZjTMFo4os1PLI6JOYnSvvudeXWut6250ZpxzUH6OQZeCgbG5U8GR9hRcWADR4uVsJjs="
+        var refNo="4499290701430784"
+        var hash= "DX/a4TAvlQUCqmC40LqgXKe8adaWUeDOrD587Z3Wo3Miamnk1Ky3cMlLBtYjWU4XKsEKsyumPAXWgnoU9nr1yzE006g+xP1XHIZGTu3nv7k1Ko2qujoKZCGewZ9Kfs5Q8JwgAmAoZTBS5lka0VyDE5O15pVFKPyhuZ6R7yHhKGHdITAVWeMqDw2QhFflDoWIPHnDW9TXL2QCOm9pjPXoqgV/F7vcUJsMdRoRTfG4oboZDRYaYc137c4X1OqmRA8EDjTK0xvlsxtKA1XzncYXGLSqhM9g9al3Li8F7EgmPN4kZvL9iHX+eh4EHxzQ/xexBGgrSFL7+zTzfZqWMB19IA=="
+        var responseData=  TestEncryptionNew(this).decryptMessage(body,key,hash,refNo)
+        println("responseData:: $responseData")
+
+/*
+       var privateKey = TestEncryptionNew(this).readPrivateKeyFromFile("")
+
+        println("privateKey:: "+privateKey)
+        var unlockData = GetTagListReqJson("TN19JY5063")
+        val jsonData = Gson().toJson(unlockData)
+//                    val enc = Encryption(this)
+//                    val requestData = "{\"entityId\": \"s3QhsIHWErcmnzkruALBtqeAjAu1\"}"
+
+            val enc = TestEncryptionNew(this)
+            val random = Random()
+            val n = (1000000000000000L + random.nextFloat() * 9000000000000000L).toLong()
+            println("Random:: "+n)
+            var encriptData=enc.encodeRequest(jsonData, ""+n, "LQFLEET101")
+//                        var splitArr=encriptData.split(":")
+            var replacedVal= encriptData.replace("'", "\"")
+            println("FileInputStream encriptData:: "+replacedVal)
+//                        var generateRequestData=GenerateRequestData(splitArr[0],splitArr[1],splitArr[2],splitArr[3],splitArr[4])
+//                        val jsonData = Gson().toJson(generateRequestData)
+            println("FileInputStream encriptData:: "+jsonData)*/
+      /*  val requestData = "{\"entityId\": \"s3QhsIHWErcmnzkruALBtqeAjAu1\"}"
+        try {
+
+//            Uri uri = Uri.parse("android.resource://"+mContext.getPackageName()+"/"+ R.raw.m2psolutions_pub);
+            *//*val uri =
+                Uri.parse("android.resource://" + getPackageName() + "/raw/" + "m2psolutions_pub")
+
+            val filePublicKey: File = File(uri.toString())*//*
+            val url =getRawUri("m2psolutions_pub.cer")
+//                Uri.parse("android.resource://" + packageName + "/" + com.agent.fasttag.R.raw.m2psolutions_pub)
+            val file = File(url.toString())
+            val f: File = File(this.cacheDir + "/filename")
+
+            println("getAbsoluteFile:: " + file+ "  filePublicKey::" + url)
+           var reader = BufferedReader(FileReader(file))
+            println("reader:: $reader")
+//            val enc = TestEncryption(this)
+
+//            var encriptData=enc.encodeRequest(requestData, "1234123412341238", "FINOWERIZE")
+
+//            println("encriptData:: "+encriptData)
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }*/
+      /*  val enc = Encryption(this)
+        try {
+
+           var keyPair:KeyPair = enc.generateKeyPair()
+            println("encriptedPubilcKey  keyPair " +
+                    ":: "+keyPair)
+
+            var encriptedPubilcKey=enc.encrypt("DurgaPrasad",keyPair.public)
+
+            println("encriptedPubilcKey:: "+encriptedPubilcKey)
+
+        }catch (e:Exception){
+            e.printStackTrace()
+        }*/
+
         var encriptString=encrypt("Mamoluga undadu Mari..")
         println("encriptString::: "+encriptString)
         var decryptString=decript(encriptString!!)
@@ -129,15 +196,15 @@ class AgentHomeActivity : AppCompatActivity() {
             binding.homeLayout.llCreateAgents.visibility=View.GONE
             binding.leftDrawerMenu.clAgents.visibility=View.GONE
             binding.leftDrawerMenu.jobNumberLine1.visibility=View.GONE
-            binding.leftDrawerMenu.clCsv.visibility=View.GONE
-            binding.leftDrawerMenu.uploadCsvLine.visibility=View.GONE
+            binding.leftDrawerMenu.clCsv.visibility=View.VISIBLE
+            binding.leftDrawerMenu.uploadCsvLine.visibility=View.VISIBLE
 
         }else if(loginFrom==getString(R.string.team_lead)){
             binding.homeLayout.llFatRecharge.gravity=Gravity.CENTER
             binding.homeLayout.llCreateAgents.visibility=View.GONE
             binding.homeLayout.createAgentByLead.visibility=View.VISIBLE
-            binding.leftDrawerMenu.clCsv.visibility=View.GONE
-            binding.leftDrawerMenu.uploadCsvLine.visibility=View.GONE
+            binding.leftDrawerMenu.clCsv.visibility=View.VISIBLE
+            binding.leftDrawerMenu.uploadCsvLine.visibility=View.VISIBLE
         }else{
             binding.homeLayout.llCreateAgents.visibility=View.VISIBLE
             binding.leftDrawerMenu.clCsv.visibility=View.VISIBLE
@@ -345,8 +412,8 @@ class AgentHomeActivity : AppCompatActivity() {
 
     }
      fun createAgent(view:View){
-        var intent=Intent(this, CreateAgentActivity::class.java)
-//         var intent=Intent(this, PhonePayPaymentGatewayActivity::class.java)
+//        var intent=Intent(this, CreateAgentActivity::class.java)
+         var intent=Intent(this, PhonePayPaymentGatewayActivity::class.java)
          intent.putExtra(getString(R.string.to_payment_gateway),getString(R.string.documents_details))
         startActivity(intent)
         AppConstants.slideToRightAnim(this)

@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.agent.fasttag.R
 import com.agent.fasttag.databinding.ActivityPhonePayPaymentGatewayBinding
 import com.agent.fasttag.databinding.ActivityTransactionsListBinding
+import com.agent.fasttag.encript.TestEncryptionNew
 import com.agent.fasttag.view.api.RetrofitService
 import com.agent.fasttag.view.model.*
 import com.agent.fasttag.view.util.AppConstants
@@ -228,7 +229,21 @@ class PhonePayPaymentGatewayActivity: AppCompatActivity() {
         vehicleRegviewModel.loadWalletRequestData().observe(this) {
             AppConstants.cancelSunsetDialog()
             println("loadWalletRequestData:: $it")
-            when (it.status) {
+            var header=it.data?.headers
+
+            var responseData=  TestEncryptionNew(this).decryptMessage(it.data?.body,header?.key,header?.hash,header?.refNo)
+            println("getTagList responseData:: $responseData")
+            var paymentLoadWalletResponse=Gson().fromJson(responseData,PaymentLoadWalletResponse::class.java)
+            println("paymentLoadWalletResponse responseData:: "+paymentLoadWalletResponse)
+            println("paymentLoadWalletResponse responseData:: "+paymentLoadWalletResponse.result)
+            if(paymentLoadWalletResponse.result!=null) {
+                statusPendingMessage( "LoadWalletRequestData  Success"+paymentLoadWalletResponse.result?.txId)
+            }else{
+                AppConstants.showMessageAlert(this, paymentLoadWalletResponse.exception?.detailMessage)
+
+            }
+
+          /*  when (it.status) {
                 Status.SUCCESS -> {
                     if(it.data?.result!=null) {
                         statusPendingMessage( "LoadWalletRequestData  Success"+it.data?.result?.txId)
@@ -244,7 +259,7 @@ class PhonePayPaymentGatewayActivity: AppCompatActivity() {
                     AppConstants.cancelSunsetDialog()
                     Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
                 }
-            }
+            }*/
         }
         vehicleRegviewModel.getTransactionIdData().observe(this) {
             AppConstants.cancelSunsetDialog()
@@ -280,7 +295,7 @@ class PhonePayPaymentGatewayActivity: AppCompatActivity() {
             }
         }
         vehicleRegviewModel.getTransactionStatusRequestData().observe(this) {
-            println("loadWalletRequestData:: $it")
+            println("loadWalletRequestData getTransactionStatusRequestData:: $it")
             when (it.status) {
                 Status.SUCCESS -> {
                     if(it.data?.status==true) {
@@ -288,6 +303,8 @@ class PhonePayPaymentGatewayActivity: AppCompatActivity() {
 //                        AppConstants.showMessageAlert(this,it.data!!.message)
                         println("TRASACTION_STATUS_RETRY_NUMBER:: $TRASACTION_STATUS_RETRY_NUMBER")
                         if(it.data.reponseData?.status=="COMPLETED") {
+                            println("TRASACTION_STATUS_RETRY_NUMBER:: COMPLETED")
+
                             AppConstants.cancelSunsetDialog()
                             AppConstants.launchSunsetDialog(this)
                             var requestBody = generateLoadWalletRequestJson()
@@ -421,7 +438,9 @@ class PhonePayPaymentGatewayActivity: AppCompatActivity() {
             "transferfunds",""+AppConstants.amountByTagId,"M2C","LQFLEET","LQFLEET",
             "MOBILE",""+externalTransactionId,"1234")
         val agentRequestJsonData = Gson().toJson(requestData)
-        val jsonObject = JSONObject(agentRequestJsonData)
+       var encriptedString= TestEncryptionNew(this).getEncriptedRequestData(agentRequestJsonData)
+
+       val jsonObject = JSONObject(encriptedString)
         val request = jsonObject.toString().toRequestBody("application/json".toMediaTypeOrNull());
 
        return request

@@ -2,6 +2,7 @@ package com.agent.fasttag.view.model
 
 data class ErrorResponse (
     val result:String="",
+    val detailMessage:String="",
     val  exception:ExceptionData
         )
 

@@ -30,16 +30,16 @@ import java.util.*
 
 object AppConstants {
 
-    val uploadKyc="uploadKyc"
+    val uploadKyc="kyc/uploadKyc"
 //    var vehicleRegistration="v3/register"
-    var vehicleRegistration="registration-manager/v3/register"
+    var vehicleRegistration="Yappay/registration-manager/v3/register"
     const val DATE_FORMAT = "dd/MM/yyyy"
     const val SERVER_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"
 
-    var UnregisteredNegativeList="fleet-manager/UnregisteredNegativeList"
-    var getTagList= "business-entity-manager/getTagList"
-    var tagClosure= "fleet-manager/negativeList"
-    var replaceTag= "business-entity-manager/replaceTag"
+    var UnregisteredNegativeList="Yappay/fleet-manager/UnregisteredNegativeList"
+    var getTagList= "Yappay/business-entity-manager/getTagList"
+    var tagClosure= "Yappay/fleet-manager/negativeList"
+    var replaceTag= "Yappay/business-entity-manager/replaceTag"
     val agentRollId="3"
     val teamLeadRollId="2"
     val superAgentRollId="1"
@@ -49,15 +49,20 @@ object AppConstants {
     var amountByTagId =0
 
     var vehicleNumberVal=""
-    var baseURL="https://kycuat.yappay.in/kyc/"
+    var baseURL_NON_ENCRIPT="https://kycuat.yappay.in/"
+    var baseURL= "https://ssltest.yappay.in/"
+
     var vehicleRegistrationBaseUrl="https://uat-fleetdrive.m2pfintech.com/core/Yappay/registration-manager/"
     var KitBaseUrl= "https://sit-secure.yappay.in/Yappay/"
+    var SSLTestBaseUrl= "https://ssltest.yappay.in/"
+
     var LoginBaseUrl= "https://loginmanagement2023.azurewebsites.net/api/"
     var AgentLogin="User/agent/login"
     var AgentforgotPassword="User/agent/forgotPassword"
     var AgentResetPassword="User/agent/resetPassword"
     var paymentGatewayBaseUrl= "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay"
-    var paymentLoadWalletBaseUrl= "https://uat-fleetdrive.m2pfintech.com/core/Yappay/txn-manager/create"
+//    var paymentLoadWalletBaseUrl= "https://uat-fleetdrive.m2pfintech.com/core/Yappay/txn-manager/create"
+    var paymentLoadWalletBaseUrl= "Yappay/txn-manager/create"
 
     var paymentGatewayCheckStatusBaseUrl= "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/status"
     var GetTransactionId="transaction/saveTransaction"

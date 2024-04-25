@@ -1,5 +1,6 @@
 package com.agent.fasttag.view.api
 
+import com.agent.fasttag.encript.Encryption
 import com.agent.fasttag.view.model.*
 import com.agent.fasttag.view.phonepay.model.status.CheckStatusModel
 import com.agent.fasttag.view.util.AppConstants
@@ -15,21 +16,21 @@ import retrofit2.http.*
 
 interface RetrofitService {
     @Headers( "Content-Type: application/json; charset=utf-8")
-    @POST("customer/generate/otp")
+    @POST("kyc/customer/generate/otp")
     suspend fun generateOtp(@Header("TENANT")  TENANT:String,@Header("partnerId")  partnerId:String,
-                            @Header("partnerToken")  partnerToken:String, @Body jsonObject: RequestBody): Response<OTPResponseData>
+                            @Header("partnerToken")  partnerToken:String, @Body jsonObject: RequestBody): Response<GetEncriptResponseData>
 
     @Headers( "Content-Type: application/json; charset=utf-8")
-    @POST("v2/register")
+    @POST("kyc/v2/register")
     suspend fun customerRegistration(@Header("TENANT")  TENANT:String,@Header("partnerId")  partnerId:String,
-                            @Header("partnerToken")  partnerToken:String, @Body jsonObject: RequestBody): Response<PersonalDetailsResponseData>
+                            @Header("partnerToken")  partnerToken:String, @Body jsonObject: RequestBody): Response<GetEncriptResponseData>
     @Headers( "Content-Type: application/json; charset=utf-8")
     @POST
     suspend fun vehicleRegistration(@Url url:String,@Header("TENANT")  TENANT:String,
-                                     @Header("Authorization")  partnerToken:String, @Body jsonObject: RequestBody): Response<VehicleRegResponseData>
+                                     @Header("Authorization")  partnerToken:String, @Body jsonObject: RequestBody): Response<GetEncriptResponseData>
     @Headers( "Content-Type: application/json; charset=utf-8")
     @POST
-    suspend fun paymentWallet(@Url url:String,@Header("TENANT")  TENANT:String,@Body jsonObject: RequestBody): Response<PaymentLoadWalletResponse>
+    suspend fun paymentWallet(@Url url:String,@Header("TENANT")  TENANT:String,@Body jsonObject: RequestBody): Response<GetEncriptResponseData>
 
 
     @Multipart
@@ -43,19 +44,23 @@ interface RetrofitService {
 
     @Headers( "Content-Type: application/json; charset=utf-8")
     @POST()
-    suspend fun unLockKit(@Url url:String,@Header("TENANT")  TENANT:String,@Body jsonObject: RequestBody): Response<KitResultData>
+    suspend fun unLockKit(@Url url:String,@Header("TENANT")  TENANT:String,@Body jsonObject: RequestBody): Response<GetEncriptResponseData>
+
+    /*@Headers( "Content-Type: application/json; charset=utf-8")
+    @POST()
+    suspend fun getTagList(@Url url:String,@Header("TENANT")  TENANT:String,@Header("Authorization")  authorization:String,jsonObject:RequestBody): Response<GetEncriptResponseData>
+*/
+    @Headers( "Content-Type: application/json; charset=utf-8")
+    @POST()
+    suspend fun getTagList(@Url url:String,@Header("TENANT")  TENANT:String,@Header("Authorization")  authorization:String,@Body jsonObject: RequestBody): Response<GetEncriptResponseData>
 
     @Headers( "Content-Type: application/json; charset=utf-8")
     @POST()
-    suspend fun getTagList(@Url url:String,@Header("TENANT")  TENANT:String,@Header("Authorization")  authorization:String,@Body jsonObject: RequestBody): Response<TagListResponseData>
+    suspend fun tagClosure(@Url url:String,@Header("TENANT")  TENANT:String,@Header("Authorization")  authorization:String,@Body jsonObject: RequestBody): Response<GetEncriptResponseData>
 
     @Headers( "Content-Type: application/json; charset=utf-8")
     @POST()
-    suspend fun tagClosure(@Url url:String,@Header("TENANT")  TENANT:String,@Header("Authorization")  authorization:String,@Body jsonObject: RequestBody): Response<TagClosureResponseData>
-
-    @Headers( "Content-Type: application/json; charset=utf-8")
-    @POST()
-    suspend fun replaceTag(@Url url:String,@Header("TENANT")  TENANT:String,@Header("Authorization")  authorization:String,@Body jsonObject: RequestBody): Response<TagReplaceResponseData>
+    suspend fun replaceTag(@Url url:String,@Header("TENANT")  TENANT:String,@Header("Authorization")  authorization:String,@Body jsonObject: RequestBody): Response<GetEncriptResponseData>
 
     @Headers( "Content-Type: application/json; charset=utf-8")
     @POST()
@@ -146,6 +151,8 @@ interface RetrofitService {
         var retrofitService: RetrofitService? = null
         var retrofit:Retrofit? =null
         fun getInstance(url: String): RetrofitService {
+
+            println("retrofitService URL::"+url)
             if (retrofitService == null) {
                  retrofit = Retrofit.Builder()
                     .baseUrl(url)

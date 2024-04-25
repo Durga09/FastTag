@@ -5,8 +5,10 @@ data class GenerateOTPJson (
     val mobileNumber: String,
     val entityId: String="",
     val businessType: String="",
-    val entityType: String=""
+    val success: String=""
+
 )
+
 data class LoginRequestJson(
 
     val PhoneNumber:String,
@@ -189,4 +191,27 @@ data class CreateCustomerRequestJson(
 data class CustomerDetailsByIdReequest(
 
     val Mobile:String?
+    )
+data class GenerateRequestData(
+
+    val token:String?,
+    val body:String?,
+    val entity:String?,
+    val key:String?,
+    val refNo:String?,
+
+)
+data class GetEncriptResponseData(
+
+    val headers:GetEncriptedRes?,
+    val body:String?,
+
+    )
+data class GetEncriptedRes(
+
+    val refNo:String?,
+    val key:String?,
+    val entity:String?,
+    val hash:String?,
+
     )

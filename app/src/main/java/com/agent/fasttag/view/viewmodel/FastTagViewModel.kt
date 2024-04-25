@@ -1,9 +1,12 @@
 package com.agent.fasttag.view.viewmodel
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.agent.fasttag.encript.Encryption
 import com.agent.fasttag.view.model.*
 import com.agent.fasttag.view.util.Resource
 import com.google.gson.GsonBuilder
@@ -19,14 +22,22 @@ import org.json.JSONObject
 
 class FastTagViewModel(private val fasTagRepository: FasTagRepository): ViewModel() {
 
-    val generateOtpData = MutableLiveData<Resource<OTPResponseData>>()
-    val customerRegistrationData = MutableLiveData<Resource<PersonalDetailsResponseData>>()
-    val vehicleRegistrationData = MutableLiveData<Resource<VehicleRegResponseData>>()
+    val generateOtpData = MutableLiveData<Resource<GetEncriptResponseData>>()
+//    val customerRegistrationData = MutableLiveData<Resource<PersonalDetailsResponseData>>()
+val customerRegistrationData = MutableLiveData<Resource<GetEncriptResponseData>>()
+    val tagListData = MutableLiveData<Resource<GetEncriptResponseData>>()
+    val tagClosure = MutableLiveData<Resource<GetEncriptResponseData>>()
+    val replaceTag = MutableLiveData<Resource<GetEncriptResponseData>>()
+    val kitResultData = MutableLiveData<Resource<GetEncriptResponseData>>()
+    val loadWalletRequestData = MutableLiveData<Resource<GetEncriptResponseData>>()
+    val vehicleRegistrationData = MutableLiveData<Resource<GetEncriptResponseData>>()
+
+//    val vehicleRegistrationData = MutableLiveData<Resource<VehicleRegResponseData>>()
     val fileUploadKycnData = MutableLiveData<Resource<UploadKycResData>>()
-    val kitResultData = MutableLiveData<Resource<KitResultData>>()
-    val tagListData = MutableLiveData<Resource<TagListResponseData>>()
-    val tagClosure = MutableLiveData<Resource<TagClosureResponseData>>()
-    val replaceTag = MutableLiveData<Resource<TagReplaceResponseData>>()
+//    val kitResultData = MutableLiveData<Resource<KitResultData>>()
+//    val tagListData = MutableLiveData<Resource<TagListResponseData>>()
+//    val tagClosure = MutableLiveData<Resource<TagClosureResponseData>>()
+//    val replaceTag = MutableLiveData<Resource<TagReplaceResponseData>>()
     val loginRequestData = MutableLiveData<Resource<LoginResponse>>()
     val forgotPasswordRequestData = MutableLiveData<Resource<LoginResponse>>()
     val createAgentRequestData = MutableLiveData<Resource<SaveOrEditAgentResponse>>()
@@ -39,7 +50,7 @@ class FastTagViewModel(private val fasTagRepository: FasTagRepository): ViewMode
     val getOtpRequestData = MutableLiveData<Resource<SendOTPResponse>>()
     val checkStatusModelData = MutableLiveData<Resource<PaymentBase64Response>>()
     val checkStatusOfPaymentPhonePe = MutableLiveData<Resource<PaymentBase64Response>>()
-    val loadWalletRequestData = MutableLiveData<Resource<PaymentLoadWalletResponse>>()
+//    val loadWalletRequestData = MutableLiveData<Resource<PaymentLoadWalletResponse>>()
     val getTransactionStatusRequestData = MutableLiveData<Resource<GetTransactionStatusResData>>()
     val getGetTransactionsResDataByAgent = MutableLiveData<Resource<GetTransactionsResDataByAgent>>()
     val getTransactionIdRequestData = MutableLiveData<Resource<GetTransactionResponseData>>()
@@ -53,25 +64,25 @@ class FastTagViewModel(private val fasTagRepository: FasTagRepository): ViewMode
     val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         onError("Exception handled: ${throwable.localizedMessage}")
     }
-    fun generateOtpData(): MutableLiveData<Resource<OTPResponseData>> {
+    fun generateOtpData(): MutableLiveData<Resource<GetEncriptResponseData>> {
         return generateOtpData
     }
-    fun customerRegistrationData(): MutableLiveData<Resource<PersonalDetailsResponseData>> {
+    fun customerRegistrationData(): MutableLiveData<Resource<GetEncriptResponseData>> {
         return customerRegistrationData
     }
     fun fileUploadKycnData(): MutableLiveData<Resource<UploadKycResData>> {
         return fileUploadKycnData
     }
-    fun vehicleRegistrationData(): MutableLiveData<Resource<VehicleRegResponseData>> {
+    fun vehicleRegistrationData(): MutableLiveData<Resource<GetEncriptResponseData>> {
         return vehicleRegistrationData
     }
-    fun tagListData(): MutableLiveData<Resource<TagListResponseData>> {
+    fun tagListData(): MutableLiveData<Resource<GetEncriptResponseData>> {
         return tagListData
     }
-    fun tagClosure(): MutableLiveData<Resource<TagClosureResponseData>> {
+    fun tagClosure(): MutableLiveData<Resource<GetEncriptResponseData>> {
         return tagClosure
     }
-    fun replaceTag(): MutableLiveData<Resource<TagReplaceResponseData>> {
+    fun replaceTag(): MutableLiveData<Resource<GetEncriptResponseData>> {
         return replaceTag
     }
     fun loginRequest(): MutableLiveData<Resource<LoginResponse>> {
@@ -110,7 +121,7 @@ class FastTagViewModel(private val fasTagRepository: FasTagRepository): ViewMode
     fun checkStatusOfPaymentPhonePe(): MutableLiveData<Resource<PaymentBase64Response>> {
         return checkStatusOfPaymentPhonePe
     }
-    fun loadWalletRequestData(): MutableLiveData<Resource<PaymentLoadWalletResponse>> {
+    fun loadWalletRequestData(): MutableLiveData<Resource<GetEncriptResponseData>> {
         return loadWalletRequestData
     }
     fun getTransactionIdData(): MutableLiveData<Resource<GetTransactionResponseData>> {
@@ -128,7 +139,7 @@ class FastTagViewModel(private val fasTagRepository: FasTagRepository): ViewMode
     fun getTagsBySerailNumberRequestData(): MutableLiveData<Resource<GetTagsBySerialNoResponseData>> {
         return getTagsbySerailNumber
     }
-    fun kitResultData(): MutableLiveData<Resource<KitResultData>> {
+    fun kitResultData(): MutableLiveData<Resource<GetEncriptResponseData>> {
         return kitResultData
     }
 
@@ -164,7 +175,7 @@ class FastTagViewModel(private val fasTagRepository: FasTagRepository): ViewMode
 //                    onError("Error errorBody: ${locerr.exception.detailMessage} ")
                     val resultData = ResultData("false",locerr.exception.detailMessage)
                     val oTPResponseData = OTPResponseData(resultData)
-                    generateOtpData.postValue(Resource.success(oTPResponseData))
+//                    generateOtpData.postValue(Resource.success(oTPResponseData))
                 }else{
                     onError("Error : ${response.message()} ")
 
@@ -202,7 +213,7 @@ class FastTagViewModel(private val fasTagRepository: FasTagRepository): ViewMode
 //                    onError("Error errorBody: ${locerr.exception.detailMessage} ")
                     val resultData = ResultData("false",locerr.exception.detailMessage)
                     val oTPResponseData = OTPResponseData(resultData)
-                    generateOtpData.postValue(Resource.success(oTPResponseData))
+//                    generateOtpData.postValue(Resource.success(oTPResponseData))
                 }else{
                     onError("Error : ${response.message()} ")
 
@@ -278,7 +289,7 @@ class FastTagViewModel(private val fasTagRepository: FasTagRepository): ViewMode
                     val resultData = PersonalDetailsException(detailMessage = locerr.exception.detailMessage, locerr.exception.detailMessage)
                   var personalDetailsResponseData=  PersonalDetailsResponseData(exception = resultData, result = PersonalDetailsResultData(false))
 //                    val oTPResponseData = PersonalDetailsException(response.body())
-                    customerRegistrationData.postValue(Resource.success(personalDetailsResponseData))
+//                    customerRegistrationData.postValue(Resource.success(personalDetailsResponseData))
                 }else{
                     onError("Error : ${response.message()} ")
 
@@ -313,12 +324,14 @@ class FastTagViewModel(private val fasTagRepository: FasTagRepository): ViewMode
 
                     var locerr = gson.fromJson(response?.errorBody()?.string(),
                         ErrorResponse::class.java)
-                    println("errorResponse:: ${locerr.exception}")
+                    println("errorResponse Loadwallet:: ${locerr.exception}")
 //                    onError("Error errorBody: ${locerr.exception.detailMessage} ")
                     val resultData = PaymentLoadWalletResponse(null, LoadWalletExceptionData(locerr.exception.detailMessage))
 //                    var personalDetailsResponseData=  PersonalDetailsResponseData(exception = resultData, result = PersonalDetailsResultData(false))
 //                    val oTPResponseData = PersonalDetailsException(response.body())
-                    loadWalletRequestData.postValue(Resource.success(resultData))
+//                    loadWalletRequestData.postValue(Resource.success(resultData))
+                    loadWalletRequestData.postValue(Resource.success(response.body()))
+
                 }else{
                     onError("Error : ${response.message()} ")
 
@@ -941,7 +954,9 @@ class FastTagViewModel(private val fasTagRepository: FasTagRepository): ViewMode
                     list.add(KitResult(false))
                     var personalDetailsResponseData=  KitResultData(exception = resultData, result = list)
 //                    val oTPResponseData = PersonalDetailsException(response.body())
-                    kitResultData.postValue(Resource.success(personalDetailsResponseData))
+//                    kitResultData.postValue(Resource.success(personalDetailsResponseData))
+                    kitResultData.postValue(Resource.success((response.body())))
+
                 }
                 else{
                     println("response:: $response")
@@ -977,7 +992,9 @@ class FastTagViewModel(private val fasTagRepository: FasTagRepository): ViewMode
 //                    onError("Error errorBody: ${locerr.exception.detailMessage} ")
                     val resultData = VehicleResultExceptionData(detailMessage = locerr.exception.detailMessage)
                     var personalDetailsResponseData=  VehicleRegResponseData(exception = resultData, result = VehicleResultData("",""))
-                    vehicleRegistrationData.postValue(Resource.success(personalDetailsResponseData))
+//                    vehicleRegistrationData.postValue(Resource.success(personalDetailsResponseData))
+                    vehicleRegistrationData.postValue(Resource.success(response.body()))
+
                 }else{
                     onError("Error : ${response.message()} ")
 
@@ -985,16 +1002,19 @@ class FastTagViewModel(private val fasTagRepository: FasTagRepository): ViewMode
             }
         }
     }
-    fun getTagList(tenant:String,authorization:String,jsonObj: String){
-
-        println("OBJ:: "+jsonObj)
+   /* @RequiresApi(Build.VERSION_CODES.O)
+    fun getTagList(tenant:String, authorization:String, jsonObj: String){
         val jsonObject = JSONObject(jsonObj)
         val request = jsonObject.toString().toRequestBody("application/json".toMediaTypeOrNull());
+        println("getTagList:: "+jsonObject)
 
         CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
             val response = fasTagRepository.getTagList(tenant,authorization,request)
+            print("response header:: ${response.raw().request.headers}")
+
             withContext(Dispatchers.Main){
                 print("response header:: ${response.raw().request.headers}")
+                println("response getTagList $response")
 
                 if(response.code()==200){
                     println("response 200 success:: $response")
@@ -1017,7 +1037,7 @@ class FastTagViewModel(private val fasTagRepository: FasTagRepository): ViewMode
                         ArrayList(), ArrayList()
                     ))
 //                    val oTPResponseData = PersonalDetailsException(response.body())
-                    tagListData.postValue(Resource.success(tagListResponseData))
+//                    tagListData.postValue(Resource.success(locerr.exception.detailMessage))
                 }
                 else{
                     println("response:: $response")
@@ -1026,7 +1046,47 @@ class FastTagViewModel(private val fasTagRepository: FasTagRepository): ViewMode
                 }
             }
         }
-    }
+    }*/
+   fun getTagList(tenant:String, authorization:String, jsonObj: String){
+
+       println(" getTagList OBJ:: "+jsonObj)
+       val jsonObject = JSONObject(jsonObj)
+       val request = jsonObject.toString().toRequestBody("application/json".toMediaTypeOrNull());
+
+       CoroutineScope(Dispatchers.IO+exceptionHandler).launch {
+           val response = fasTagRepository.getTagList(tenant,authorization,request)
+           withContext(Dispatchers.Main){
+               print("response getTagList header:: ${response.raw().request.headers}")
+
+               if(response.code()==200){
+                   println("response getTagList 200 success:: $response")
+
+                   tagListData.postValue(Resource.success((response.body())))
+                   loading.value=false
+               }  else if(response.code()==500){
+                   val gson = GsonBuilder()
+                       .setLenient()
+                       .create()
+
+                   var locerr = gson.fromJson(response?.errorBody()?.string(),
+                       ErrorResponse::class.java)
+                   println("errorResponse:: ${locerr.exception}")
+//                    onError("Error errorBody: ${locerr.exception.detailMessage} ")
+                   var errorarr = ArrayList<TagColureResultData>()
+
+                   val exceptionData = ErrorResponse(exception = ExceptionData(locerr.exception.detailMessage))
+                   var tagListResponseData=  TagClosureResponseData(exception = exceptionData, result =errorarr)
+//                    val oTPResponseData = PersonalDetailsException(response.body())
+//                   tagClosure.postValue(Resource.success(tagListResponseData))
+               }
+               else{
+                   println("response:: $response")
+                   onError("Error : ${response.errorBody()} ")
+
+               }
+           }
+       }
+   }
     fun tagClosure(tenant:String,authorization:String,jsonObj: String){
 
         println(" tagClosure OBJ:: "+jsonObj)
@@ -1057,7 +1117,7 @@ class FastTagViewModel(private val fasTagRepository: FasTagRepository): ViewMode
                     val exceptionData = ErrorResponse(exception = ExceptionData(locerr.exception.detailMessage))
                     var tagListResponseData=  TagClosureResponseData(exception = exceptionData, result =errorarr)
 //                    val oTPResponseData = PersonalDetailsException(response.body())
-                    tagClosure.postValue(Resource.success(tagListResponseData))
+//                    tagClosure.postValue(Resource.success(tagListResponseData))
                 }
                 else{
                     println("response:: $response")
@@ -1095,7 +1155,9 @@ class FastTagViewModel(private val fasTagRepository: FasTagRepository): ViewMode
                     val exceptionData = ErrorResponse(exception = ExceptionData(locerr.exception.detailMessage))
                     var tagListResponseData=  TagReplaceResponseData(exception = exceptionData, result = "")
 //                    val oTPResponseData = PersonalDetailsException(response.body())
-                    replaceTag.postValue(Resource.success(tagListResponseData))
+//                    replaceTag.postValue(Resource.success(tagListResponseData))
+                    replaceTag.postValue(Resource.success((response.body())))
+
                 }
                 else{
                     println("response:: $response")

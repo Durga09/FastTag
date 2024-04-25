@@ -24,6 +24,23 @@ object BaseRetrofit {
         )
         val interceptor = HttpLoggingInterceptor()
         interceptor.level = if (isDebugging) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
+        httpClient.addInterceptor { chain: Interceptor.Chain ->
+            val original = chain.request()
+            println("original request url:: "+original.url)
+            val requestBuilder = original.newBuilder()
+                .addHeader("Accept", "application/json")
+            // adding auth token
+            /* val token: String? = CustomSharedPreferences.instance.getToken()
+             if (!TextUtils.isEmpty(token)) {
+                 requestBuilder.addHeader("Authorization", "Bearer $token")
+             }*/
+            val request = requestBuilder.build()
+            var response = chain.proceed(request)
+            response
+        }
+
+
+
 
 //        httpClient.addInterceptor(AuthInterceptor())
         httpClient.addNetworkInterceptor(interceptor)

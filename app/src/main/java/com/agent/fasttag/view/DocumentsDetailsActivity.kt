@@ -21,6 +21,7 @@ import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.FrameLayout
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -32,6 +33,7 @@ import com.agent.fasttag.databinding.ActivityDocumentsDetailsBinding
 import com.agent.fasttag.databinding.ChhoseImageFromBinding
 import com.agent.fasttag.databinding.LayoutDailogListViewBinding
 import com.agent.fasttag.databinding.LayoutTlBottomSheetBinding
+import com.agent.fasttag.encript.TestEncryptionNew
 import com.agent.fasttag.view.adapter.CommanAdapter
 import com.agent.fasttag.view.adapter.VehicleNumbersAdapter
 import com.agent.fasttag.view.api.RetrofitService
@@ -95,6 +97,7 @@ class DocumentsDetailsActivity : AppCompatActivity() {
         "VC16" to "MC17 Heavy Construction Machinery")
     val mapWithDuplicateKeys=mutableListOf<Pair<String,String>>()
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDocumentsDetailsBinding.inflate(layoutInflater)
@@ -126,6 +129,7 @@ class DocumentsDetailsActivity : AppCompatActivity() {
         replaceTagObserver()
 
     }
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun initView(){
         AppConstants.vehicleNumberVal=""
         binding.headerLayout.tvToolbarHederTitle.visibility= View.GONE
@@ -156,15 +160,74 @@ class DocumentsDetailsActivity : AppCompatActivity() {
             var registerVehicleNumber = binding.addReplaceRegistrationNumberInput.text.toString()
             addReplaceRegistrationNumber=registerVehicleNumber
             if (registerVehicleNumber != "") {
-                if(AppConstants.isNetworkAvailable(this)) {
+                if (AppConstants.isNetworkAvailable(this)) {
                     AppConstants.launchSunsetDialog(this)
                     var unlockData = GetTagListReqJson(registerVehicleNumber)
                     val jsonData = Gson().toJson(unlockData)
-                    vehicleRegviewModel.getTagList(
-                        AppConstants.tenant,
-                        AppConstants.authorization,
-                        jsonData
-                    )
+//                    val enc = Encryption(this)
+//                    val requestData = "{\"entityId\": \"s3QhsIHWErcmnzkruALBtqeAjAu1\"}"
+                    try {
+                        val enc = TestEncryptionNew(this)
+                        val random = Random()
+                        val n = (1000000000000000L + random.nextFloat() * 9000000000000000L).toLong()
+                        println("Random:: "+n)
+//                        var generateRequestData=GenerateRequestData(splitArr[0],splitArr[1],splitArr[2],splitArr[3],splitArr[4])
+//                        val jsonData = Gson().toJson(generateRequestData)
+                        println("encriptData:: "+jsonData)
+                        var encriptedString= TestEncryptionNew(this).getEncriptedRequestData(jsonData)
+
+                        vehicleRegviewModel.getTagList(
+                            AppConstants.tenant,
+                            AppConstants.authorization,
+                            encriptedString
+                        )
+                      /*  var unlockData = TagClosureReqJson("34161FA82033E764D9FB04A1","06","add")
+
+                        val jsonData = Gson().toJson(unlockData)
+                        var encriptedString= TestEncryptionNew(this).getEncriptedRequestData(jsonData)
+
+                        vehicleRegviewModel.tagClosure(
+                                AppConstants.tenant,
+                                AppConstants.authorization,
+                                encriptedString
+                            )*/
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+
+                    /*try {
+
+                        var keyPair: KeyPair = enc.generateKeyPair()
+                        println("encriptedPubilcKey  keyPair " +
+                                ":: "+keyPair)
+
+                        var encriptedData:String=enc.encrypt(jsonData.toString(),keyPair.public)
+
+                        println("encriptedPubilcKey:: "+encriptedData)
+                        vehicleRegviewModel.getTagList(
+                            AppConstants.tenant,
+                            AppConstants.authorization,
+                            encriptedData
+                        )
+
+                    }catch (e:Exception){
+                        e.printStackTrace()
+                    }*/
+                   /* try {
+                       *//* enc.encodeRequest(jsonData, "1234123412341238", "FINOWERIZE")
+                        val responseMap: Map<String, String> = HashMap()*//*
+                        val PublicKeyStr = assets.open("com.agent.fasttag.pubkey.pem").bufferedReader().use {
+                            it.readText()
+                        }
+
+                        println("PublicKeyStr:: "+PublicKeyStr)
+                        var encriptData=Encryption(this).encrypt(jsonData.toString(), publicKeyString = PublicKeyStr)
+
+                        println("PublicKeyStr encriptData:: "+encriptData)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }*/
+
                 }else{
                     AppConstants.showNoInternetConnectionMessageAlert(this)
                 }
@@ -268,10 +331,11 @@ class DocumentsDetailsActivity : AppCompatActivity() {
                 var unlockData = TagClosureReqJson(oldKitNumber,"06","add")
                 val jsonData = Gson().toJson(unlockData)
                 if(AppConstants.isNetworkAvailable(this)) {
+                    var encriptedString= TestEncryptionNew(this).getEncriptedRequestData(jsonData)
                     vehicleRegviewModel.tagClosure(
                         AppConstants.tenant,
                         AppConstants.authorization,
-                        jsonData
+                        encriptedString
                     )
                     kitNumberUpdate = true
                 }else{
@@ -284,10 +348,12 @@ class DocumentsDetailsActivity : AppCompatActivity() {
     private fun callVehicleRegistration(){
 
         AppConstants.launchSunsetDialog(this)
+        var encriptedString= TestEncryptionNew(this).getEncriptedRequestData(getRequestJson())
+
         vehicleRegviewModel.vehicleRegistration(
             AppConstants.tenant,
             AppConstants.vehicleToken,
-            getRequestJson()
+            encriptedString
         )
     }
     private fun callUploadFile(){
@@ -344,6 +410,7 @@ class DocumentsDetailsActivity : AppCompatActivity() {
     fun CallObserveuploadVehicleRegistration(){
         vehicleRegviewModel.createCustomerRequestData().observe(this){
             AppConstants.cancelSunsetDialog()
+
             when(it.status){
                 Status.SUCCESS ->{
 //                    showResponseMessageAlert(this,it.data!!.message)
@@ -380,7 +447,14 @@ class DocumentsDetailsActivity : AppCompatActivity() {
         }
         vehicleRegviewModel.vehicleRegistrationData().observe(this) {
             AppConstants.cancelSunsetDialog()
-            if(it.data!!.exception==null) {
+            var header=it.data?.headers
+
+            var responseData=  TestEncryptionNew(this).decryptMessage(it.data?.body,header?.key,header?.hash,header?.refNo)
+            println("getTagList responseData:: $responseData")
+            var vehicleRegResponseData=Gson().fromJson(responseData,VehicleRegResponseData::class.java)
+            println("vehicleRegResponseData responseData:: "+vehicleRegResponseData)
+            println("vehicleRegResponseData responseData:: "+vehicleRegResponseData.result)
+            if(vehicleRegResponseData.exception==null) {
                 Toast.makeText(this, "vehicle registration Success.", Toast.LENGTH_SHORT).show()
                 if(AppConstants.isNetworkAvailable(this)) {
                     callUploadFile()
@@ -388,7 +462,7 @@ class DocumentsDetailsActivity : AppCompatActivity() {
                     AppConstants.showNoInternetConnectionMessageAlert(this)
                 }
             }else{
-                Toast.makeText(this, it.data!!.exception.detailMessage, Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, vehicleRegResponseData.exception.detailMessage, Toast.LENGTH_SHORT).show()
 
             }
 
@@ -401,8 +475,8 @@ class DocumentsDetailsActivity : AppCompatActivity() {
 
                     if(it.data?.message=="Success"){
 //                        AppConstants.showMessageAlert(this,it.data.reponseData?.kitNumber)
+                        println("profileId:: "+it.data)
                         var profileID=it.data.reponseData?.profileId!!
-                        val valuesMatchingKEY1 = mapWithDuplicateKeys.filter { it.first== profileID }.map{it.second}
 
 
                         unlockKit(it.data.reponseData?.kitNumber!!)
@@ -411,6 +485,11 @@ class DocumentsDetailsActivity : AppCompatActivity() {
 
                         binding.etTagIdInput.setText(it.data.reponseData?.tagId!!)
                         binding.etProfileIdInput.setOnClickListener {
+                           var profileID_New= binding.etTagIdInput.text.toString()
+
+                            println("profileID_New:: "+profileID_New)
+                            val valuesMatchingKEY1 = mapWithDuplicateKeys.filter { it.first== profileID_New }.map{it.second}
+
                             println("profilerIdsArry:: $valuesMatchingKEY1")
 
                             if(valuesMatchingKEY1.isNotEmpty()) {
@@ -421,6 +500,10 @@ class DocumentsDetailsActivity : AppCompatActivity() {
                             }
                         }
                         binding.etReplaceProfileIdInput.setOnClickListener {
+                            var profileID_New= binding.etTagIdInput.text.toString()
+
+                            val valuesMatchingKEY1 = mapWithDuplicateKeys.filter { it.first== profileID_New }.map{it.second}
+
                             println("profilerIdsArry:: $valuesMatchingKEY1")
 
                             if(valuesMatchingKEY1.isNotEmpty()) {
@@ -455,11 +538,21 @@ class DocumentsDetailsActivity : AppCompatActivity() {
 //                binding.scannedKtNumber.setText("34161FA82073E764D9E85321")
         vehicleRegviewModel.tagListData().observe(this) {
             AppConstants.cancelSunsetDialog()
-            if(it.data!!.exception==null) {
-                if(it.data!!.result.cardList.size>0) {
-//                        Toast.makeText(this, "Success.", Toast.LENGTH_SHORT).show()
 
-                    /* AppConstants.personalDetail= PersonalDetailsData(pincodeVal,
+            println("tagListData data::"+it.data)
+            var header=it.data?.headers
+
+            var responseData=  TestEncryptionNew(this).decryptMessage(it.data?.body,header?.key,header?.hash,header?.refNo)
+            println("getTagList responseData:: $responseData")
+            var tagListResponseData=Gson().fromJson(responseData,TagListResponseData::class.java)
+            println("tagListResponseData responseData:: "+tagListResponseData)
+            println("tagListResponseData responseData:: "+tagListResponseData.result)
+
+             if(tagListResponseData.exception==null) {
+                 if(tagListResponseData.result.cardList.size>0) {
+ //                        Toast.makeText(this, "Success.", Toast.LENGTH_SHORT).show()
+
+                      /*AppConstants.personalDetail= PersonalDetailsData(pincodeVal,
                  AppConstants.country,stateVal,cityVal,addressLine1Val,addressLine2Val,addressLine1Val,
                  AppConstants.phoneNumber,lastNameVal,firstNameVal)*/
                     binding.etOldKitNumber.visibility = View.VISIBLE
@@ -469,7 +562,7 @@ class DocumentsDetailsActivity : AppCompatActivity() {
                     val adapter = ArrayAdapter<String>(
                         this,
                         R.layout.spinner_item,
-                        it.data!!.result.cardList
+                        tagListResponseData.result.cardList
                     )
 
                     // Give the suggestion after 1 words.
@@ -488,7 +581,7 @@ class DocumentsDetailsActivity : AppCompatActivity() {
 
                 }
             }else{
-                Toast.makeText(this, it.data!!.exception.exception.detailMessage, Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, tagListResponseData.exception.detailMessage, Toast.LENGTH_SHORT).show()
                 binding.etOldKitNumber.visibility=View.GONE
                 binding.llNewKitDetails.visibility=View.GONE
                 binding.btnNext.visibility = View.GONE
@@ -516,28 +609,39 @@ class DocumentsDetailsActivity : AppCompatActivity() {
 
         vehicleRegviewModel.tagClosure().observe(this) {
             AppConstants.cancelSunsetDialog()
-            if(it.data!!.exception==null) {
-                Toast.makeText(this, "Tag Closure Success.", Toast.LENGTH_SHORT).show()
-                if(AppConstants.isNetworkAvailable(this)) {
-                    AppConstants.launchSunsetDialog(this)
-                    var replaceProfile_id=binding.etReplaceProfileIdInput.text.toString().split(" ")[0]
-                    var unlockData = ReplaceTagReqJson(
-                        addReplaceRegistrationNumber,
-                        oldKitNumber,
-                        newKitNumberForReplace,
-                        replaceProfile_id
-                    )
-                    val jsonData = Gson().toJson(unlockData)
-                    vehicleRegviewModel.tagReplace(
-                        AppConstants.tenant,
-                        AppConstants.authorization,
-                        jsonData
-                    )
-                }else{
-                    AppConstants.showNoInternetConnectionMessageAlert(this)
-                }
-            }else{
-                /* AppConstants.launchSunsetDialog(this)
+
+            println("tagClosure:: "+it)
+
+            var header=it.data?.headers
+            var responseData=  TestEncryptionNew(this).decryptMessage(it.data?.body,header?.key,header?.hash,header?.refNo)
+            println("getTagList responseData:: $responseData")
+            var tagClosureResponseData=Gson().fromJson(responseData,TagClosureResponseData::class.java)
+            println("tagListResponseData responseData:: "+tagClosureResponseData)
+            println("tagListResponseData responseData:: "+tagClosureResponseData.result)
+
+           if(tagClosureResponseData.exception==null) {
+                 Toast.makeText(this, "Tag Closure Success.", Toast.LENGTH_SHORT).show()
+                 if(AppConstants.isNetworkAvailable(this)) {
+                     AppConstants.launchSunsetDialog(this)
+                     var replaceProfile_id=binding.etReplaceProfileIdInput.text.toString().split(" ")[0]
+                     var unlockData = ReplaceTagReqJson(
+                         addReplaceRegistrationNumber,
+                         oldKitNumber,
+                         newKitNumberForReplace,
+                         replaceProfile_id
+                     )
+                     val jsonData = Gson().toJson(unlockData)
+                     var encriptedString= TestEncryptionNew(this).getEncriptedRequestData(jsonData)
+                     vehicleRegviewModel.tagReplace(
+                         AppConstants.tenant,
+                         AppConstants.authorization,
+                         encriptedString
+                     )
+                 }else{
+                     AppConstants.showNoInternetConnectionMessageAlert(this)
+                 }
+             }else{
+              /*    AppConstants.launchSunsetDialog(this)
                  var unlockData = ReplaceTagReqJson(addReplaceRegistrationNumber,oldKitNumber,newKitNumber,"VC4")
                  val jsonData = Gson().toJson(unlockData)
                  vehicleRegviewModel.tagReplace(AppConstants.tenant,AppConstants.authorization,jsonData)*/
@@ -547,7 +651,7 @@ class DocumentsDetailsActivity : AppCompatActivity() {
 
             }
         }
-        vehicleRegviewModel.errorMessage.observe(this) {
+      /*  vehicleRegviewModel.errorMessage.observe(this) {
             AppConstants.cancelSunsetDialog()
             Toast.makeText(this, "Tag close failed.Please try again..", Toast.LENGTH_SHORT).show()
             vehicleRegviewModel.loading.observe(this, Observer {
@@ -558,7 +662,7 @@ class DocumentsDetailsActivity : AppCompatActivity() {
 
 
 
-        }
+        }*/
     }
     fun replaceTagObserver() {
 //                binding.scannedKtNumber.setText("34161FA82073E764D9E85321")
@@ -566,14 +670,19 @@ class DocumentsDetailsActivity : AppCompatActivity() {
         vehicleRegviewModel.kitResultData().observe(this) {
 
             println("kitResultData:: "+it)
-
-            if(it.data!!.exception==null) {
+            var header=it.data?.headers
+            var responseData=  TestEncryptionNew(this).decryptMessage(it.data?.body,header?.key,header?.hash,header?.refNo)
+            println("getTagList responseData:: $responseData")
+            var kitResultData=Gson().fromJson(responseData,KitResultData::class.java)
+            println("kitResultData responseData:: "+kitResultData)
+            println("kitResultData responseData:: "+kitResultData.result)
+            if(kitResultData.exception==null) {
                 Toast.makeText(this, "Kit number unlocked success.", Toast.LENGTH_SHORT).show()
                 /* AppConstants.personalDetail= PersonalDetailsData(pincodeVal,
                  AppConstants.country,stateVal,cityVal,addressLine1Val,addressLine2Val,addressLine1Val,
                  AppConstants.phoneNumber,lastNameVal,firstNameVal)*/
             }else{
-                Toast.makeText(this, it.data!!.exception.detailMessage, Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, kitResultData.exception.detailMessage, Toast.LENGTH_SHORT).show()
             }
         }
         vehicleRegviewModel.errorMessage.observe(this) {
@@ -592,7 +701,14 @@ class DocumentsDetailsActivity : AppCompatActivity() {
         }
         vehicleRegviewModel.replaceTag().observe(this) {
             AppConstants.cancelSunsetDialog()
-            if(it.data!!.exception==null) {
+            var header=it.data?.headers
+
+            var responseData=  TestEncryptionNew(this).decryptMessage(it.data?.body,header?.key,header?.hash,header?.refNo)
+            println("tagReplaceResponseData responseData:: $responseData")
+            var tagReplaceResponseData=Gson().fromJson(responseData,TagReplaceResponseData::class.java)
+            println("tagReplaceResponseData responseData:: "+tagReplaceResponseData)
+            println("tagReplaceResponseData responseData:: "+tagReplaceResponseData.result)
+            if(tagReplaceResponseData.exception==null) {
                 Toast.makeText(this, " Replace Tag Success.", Toast.LENGTH_SHORT).show()
 
                 updateCustomerdetails(false,newKitNumber,addReplaceRegistrationNumber)
@@ -601,7 +717,7 @@ class DocumentsDetailsActivity : AppCompatActivity() {
              AppConstants.country,stateVal,cityVal,addressLine1Val,addressLine2Val,addressLine1Val,
              AppConstants.phoneNumber,lastNameVal,firstNameVal)*/
             }else{
-                Toast.makeText(this, "Replace Tag  "+it.data!!.exception.exception.detailMessage, Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Replace Tag  "+tagReplaceResponseData.exception.exception.detailMessage, Toast.LENGTH_SHORT).show()
 
             }
 
@@ -628,9 +744,10 @@ class DocumentsDetailsActivity : AppCompatActivity() {
         if (kitNo != "") {
             var unlockData = UnlockKitReqJson(kitNo, "01", "REMOVE")
             val jsonData = Gson().toJson(unlockData)
+            var encriptedString= TestEncryptionNew(this).getEncriptedRequestData(jsonData)
 
             if(AppConstants.isNetworkAvailable(this)) {
-                vehicleRegviewModel.unLockKit(AppConstants.tenant, jsonData)
+                vehicleRegviewModel.unLockKit(AppConstants.tenant, encriptedString)
             }else{
                 AppConstants.showNoInternetConnectionMessageAlert(this)
             }

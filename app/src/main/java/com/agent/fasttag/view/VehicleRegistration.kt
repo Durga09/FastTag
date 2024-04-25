@@ -249,14 +249,14 @@ class VehicleRegistration : AppCompatActivity() {
             when (it.status) {
                 Status.SUCCESS -> {
                     AppConstants.cancelSunsetDialog()
-                    if(it.data?.result!!.success=="true") {
+                  /*  if(it.data?.result!!.success=="true") {
                         println("entityId" + it.data?.result!!.entityId)
                         AppConstants.entityId = it.data?.result!!.entityId
 //                       navigateNextActivity()
                     }else{
                         Toast.makeText(this,  it.data?.result!!.entityId, Toast.LENGTH_LONG).show()
 
-                    }
+                    }*/
 
                 }
                 Status.LOADING -> {
