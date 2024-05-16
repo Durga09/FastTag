@@ -32,6 +32,7 @@
     <string name="kit_number">Kit Number<font color='#FF6224'>*</font></string>
     <string name="transaction_id">Transaction Id</string>
     <string name="Select_Profile_Id">Select Profile Id</string>
+    <string name="old_kit_no_by_replace">Old Kit Number</string>
 
     <string name="Add_kit">Add kit</string>
     <string name="Replace_Kit">Replace Kit</string>
@@ -69,6 +70,8 @@
     <string name="transactions">Transactions </string>
     <string name="to_payment_gateway">Go to payment gateway </string>
     <string name="Rs">\u20B9</string>
+    <string name="do_not_close_app">Do not Close the app.Please wait.. </string>
+
     <string name="get_referral_code_and_agent_id_from_hd_partner">Get \'Referral Code\' and \'Agent Id \' from HD partner</string>
     <string name="next">Next</string>
     <string name="first_name">First Name<font color='#FF6224'>*</font></string>
@@ -85,6 +88,7 @@
     <string name="role_not_mandatory">Role</string>
     <string name="please_enter_otp">Please enter otp</string>
     <string name="invalid_otp">Invalid otp</string>
+    <string name="please_enter_valid_phone_number">Please enter valid phone number</string>
 
     <string name="please_enter_phone_number">Please enter phone number</string>
     <string name="please_enter_new_password">Please enter new password</string>
@@ -97,6 +101,7 @@
     <string name="please_enter_email">Please enter email</string>
     <string name="please_select_vehicle_number">Please Select vehicle number</string>
     <string name="no_internet_connection">No Internet connection. Please try again..</string>
+    <string name="please_enter_valid_email">Please enter valid email</string>
 
     <string name="district">District</string>
     <string name="select_state">Select State</string>

@@ -184,11 +184,11 @@ class AgentHomeActivity : AppCompatActivity() {
             e.printStackTrace()
         }*/
 
-        var encriptString=encrypt("Mamoluga undadu Mari..")
+      /*  var encriptString=encrypt("Mamoluga undadu Mari..")
         println("encriptString::: "+encriptString)
         var decryptString=decript(encriptString!!)
         println("decriptString::: "+decryptString)
-        var bundle :Bundle ?=intent.extras
+        var bundle :Bundle ?=intent.extras*/
         loginFrom = AppConstants.loginFrom
         println("LOGIN FROM $loginFrom")
         if(loginFrom==getString(R.string.agent)){
@@ -412,10 +412,11 @@ class AgentHomeActivity : AppCompatActivity() {
 
     }
      fun createAgent(view:View){
-//        var intent=Intent(this, CreateAgentActivity::class.java)
-         var intent=Intent(this, PhonePayPaymentGatewayActivity::class.java)
-         intent.putExtra(getString(R.string.to_payment_gateway),getString(R.string.documents_details))
-        startActivity(intent)
+        var intent=Intent(this, CreateAgentActivity::class.java)
+//         var intent=Intent(this, PhonePayPaymentGatewayActivity::class.java)
+//         intent.putExtra(getString(R.string.to_payment_gateway),getString(R.string.documents_details))
+         intent.putExtra(getString(R.string.role_from),getString(R.string.agent))
+         startActivity(intent)
         AppConstants.slideToRightAnim(this)
     }
     @RequiresApi(Build.VERSION_CODES.O)

@@ -167,7 +167,6 @@
                         android:visibility="gone"
                         android:layout_weight="7"
                         android:layout_gravity="center"
-
                         android:hint="@string/old_kit_number"
                         >
 
@@ -177,7 +176,12 @@
                             android:layout_height="50dp"
                             android:completionThreshold="1"
                             android:paddingLeft="15dp"
+                            android:editable="false"
+                            android:focusableInTouchMode="false"
+                            android:cursorVisible="false"
+                            android:clickable="false"
                             android:text=""
+                            android:drawableRight="@drawable/down_arrow"
                             android:textSize="16sp"
                             android:inputType="text"
                             android:maxLines="1" />
@@ -277,10 +281,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text=""
-                            android:editable="false"
-                            android:focusableInTouchMode="false"
-                            android:cursorVisible="false"
-                            android:clickable="false"
                             android:inputType="text"
                             android:maxLines="1" />
 

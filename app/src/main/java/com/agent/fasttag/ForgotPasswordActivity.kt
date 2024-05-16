@@ -70,6 +70,8 @@ class ForgotPasswordActivity : AppCompatActivity() {
         }
     }
     private fun initView(){
+        binding.headerLayout.ivToolBarBack.visibility= View.VISIBLE
+
         categoryTypeArr.add("Customer")
         categoryTypeArr.add("Agent")
         binding.headerLayout.ivToolBarBack.setOnClickListener {
@@ -120,6 +122,17 @@ class ForgotPasswordActivity : AppCompatActivity() {
                 viewModel.agentForgotPassword(request)
             }
         }
+    }
+    public fun back(view:View){
+        onBackPressed()
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        overridePendingTransition(
+            R.anim.slide_in_left,
+            R.anim.slide_out_right
+        )
     }
     private fun setupViewModel() {
         retrofitService = RetrofitService.getInstance(AppConstants.baseURL)

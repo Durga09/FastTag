@@ -11,6 +11,7 @@ import android.os.Build
 import android.text.Html
 import android.text.Layout
 import android.text.SpannableString
+import android.text.TextUtils
 import android.text.style.AlignmentSpan
 import android.util.Patterns
 import android.widget.LinearLayout
@@ -143,7 +144,13 @@ object AppConstants {
         progressDialog?.dismiss()
     }
 
-
+    fun isValidEmail(target: CharSequence?): Boolean {
+        return if (TextUtils.isEmpty(target)) {
+            false
+        } else {
+            Patterns.EMAIL_ADDRESS.matcher(target).matches()
+        }
+    }
     fun showMessageAlert(mContext: Activity, message: String?) {
         mContext.runOnUiThread {
             val builder = AlertDialog.Builder(mContext)

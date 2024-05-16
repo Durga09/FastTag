@@ -32,9 +32,13 @@ class VehicleRegistration : AppCompatActivity() {
     private var referralCode=""
     private var vehicleClass=""
     private var agentId=""
+    var isRefferalCodeValidate=false
     private var phoneNumber=""
     var vehicleClassArr = ArrayList<String>()
     var retrofitService: RetrofitService? =null
+
+    var referralCodeList= ArrayList<String>()
+
     lateinit var viewModel: FastTagViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,30 +69,43 @@ class VehicleRegistration : AppCompatActivity() {
         vehicleClassArr.add(getString(R.string.CUSTOMER))
         vehicleClassArr.add(getString(R.string.TRUCK_RETAIL))
         vehicleClassArr.add(getString(R.string.TRUCK_CORPORATE))
+
+        referralCodeList.add("ZERO")
+        referralCodeList.add("HUNDRED")
+        referralCodeList.add("TWO HUNDRED")
+        referralCodeList.add("THREE HUNDRED")
+        referralCodeList.add("FOUR HUNDRED")
+        referralCodeList.add("FIVE HUNDRED")
+
         binding.etVehicleClassInput.setOnClickListener {
             openDialog(getString(R.string.select_vehicle_type),vehicleClassArr)
         }
         binding.validateReferralCode.setOnClickListener {
             var referralCodeKey=binding.referralCodeInput.text.toString()
             AppConstants.referralCodeKey=referralCodeKey
-
+            isRefferalCodeValidate=false
             when (referralCodeKey){
 
-                "ZERO"  -> AppConstants.referralCodeVal=150
-                "HUNDRED"  -> AppConstants.referralCodeVal=100
-                "TWO HUNDRED"  -> AppConstants.referralCodeVal=200
-                "THREE HUNDRED"  -> AppConstants.referralCodeVal=300
-                "FOUR HUNDRED"  -> AppConstants.referralCodeVal=400
-                "FIVE HUNDRED"  -> AppConstants.referralCodeVal=500
+                referralCodeList[0]  -> AppConstants.referralCodeVal=150
+                referralCodeList[1]  -> AppConstants.referralCodeVal=100
+                referralCodeList[2]  -> AppConstants.referralCodeVal=200
+                referralCodeList[3]  -> AppConstants.referralCodeVal=300
+                referralCodeList[4]  -> AppConstants.referralCodeVal=400
+                referralCodeList[5]  -> AppConstants.referralCodeVal=500
 
             }
+             if(referralCodeKey==null && referralCodeKey==""){
+                 Toast.makeText(this,"Please enter Referral code",Toast.LENGTH_SHORT).show()
+             }else if(!referralCodeList.contains(referralCodeKey)) {
+                 Toast.makeText(this,"Please enter valid Referral code",Toast.LENGTH_SHORT).show()
 
-            if(AppConstants.referralCodeVal==150 || AppConstants.referralCodeVal==100 || AppConstants.referralCodeVal==200
-                ||AppConstants.referralCodeVal==300 || AppConstants.referralCodeVal == 400 || AppConstants.referralCodeVal == 500){
-                Toast.makeText(this,"Referral code added success",Toast.LENGTH_SHORT).show()
-            }else{
-                Toast.makeText(this,"Please Enter Referral Code ",Toast.LENGTH_SHORT).show()
-            }
+             }
+            else if((AppConstants.referralCodeVal==150 || AppConstants.referralCodeVal==100 || AppConstants.referralCodeVal==200
+                ||AppConstants.referralCodeVal==300 || AppConstants.referralCodeVal == 400 || AppConstants.referralCodeVal == 500)){
+                 isRefferalCodeValidate=true
+                     Toast.makeText(this, "Referral code added success", Toast.LENGTH_SHORT).show()
+                 }
+
 
            /* if(referralCodeVal=="ZERO" ){
                 AppConstants.referralCodeVal=150
@@ -147,8 +164,8 @@ class VehicleRegistration : AppCompatActivity() {
 //            Toast.makeText(this,"Please select vehicle class",Toast.LENGTH_SHORT).show()
 //
 //        }
-        else if(AppConstants.referralCodeKey==""){
-            Toast.makeText(this,"Please enter referral code",Toast.LENGTH_SHORT).show()
+        else if(isRefferalCodeValidate==false){
+            Toast.makeText(this,"Please validate referral code",Toast.LENGTH_SHORT).show()
         }
        else {
             vehicleClass = vehicleClass.replace(" ", "_")

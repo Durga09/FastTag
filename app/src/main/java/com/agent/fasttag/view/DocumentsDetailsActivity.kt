@@ -81,6 +81,8 @@ class DocumentsDetailsActivity : AppCompatActivity() {
     var kitNumberUpdate=false
     var customerFile:File?=null
     var rcBackSideFile:File?=null
+    var rcFrontSideFile:File?=null
+
     lateinit var personalDetailsData: PersonalDetailsData
     private var qrScanIntegrator: IntentIntegrator? = null
     var retrofitService: RetrofitService? =null
@@ -157,6 +159,9 @@ class DocumentsDetailsActivity : AppCompatActivity() {
 //        binding.scannedKtNumber.setText("652210-108-1034068")
 
         binding.getTagList.setOnClickListener {
+              binding.etOldKitNumberInput.setText("")
+            binding.etReplaceTagIdInput.setText("")
+            binding.etReplaceProfileIdInput.setText("")
             var registerVehicleNumber = binding.addReplaceRegistrationNumberInput.text.toString()
             addReplaceRegistrationNumber=registerVehicleNumber
             if (registerVehicleNumber != "") {
@@ -164,69 +169,17 @@ class DocumentsDetailsActivity : AppCompatActivity() {
                     AppConstants.launchSunsetDialog(this)
                     var unlockData = GetTagListReqJson(registerVehicleNumber)
                     val jsonData = Gson().toJson(unlockData)
-//                    val enc = Encryption(this)
-//                    val requestData = "{\"entityId\": \"s3QhsIHWErcmnzkruALBtqeAjAu1\"}"
                     try {
-                        val enc = TestEncryptionNew(this)
-                        val random = Random()
-                        val n = (1000000000000000L + random.nextFloat() * 9000000000000000L).toLong()
-                        println("Random:: "+n)
-//                        var generateRequestData=GenerateRequestData(splitArr[0],splitArr[1],splitArr[2],splitArr[3],splitArr[4])
-//                        val jsonData = Gson().toJson(generateRequestData)
-                        println("encriptData:: "+jsonData)
                         var encriptedString= TestEncryptionNew(this).getEncriptedRequestData(jsonData)
-
                         vehicleRegviewModel.getTagList(
                             AppConstants.tenant,
                             AppConstants.authorization,
                             encriptedString
                         )
-                      /*  var unlockData = TagClosureReqJson("34161FA82033E764D9FB04A1","06","add")
 
-                        val jsonData = Gson().toJson(unlockData)
-                        var encriptedString= TestEncryptionNew(this).getEncriptedRequestData(jsonData)
-
-                        vehicleRegviewModel.tagClosure(
-                                AppConstants.tenant,
-                                AppConstants.authorization,
-                                encriptedString
-                            )*/
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
-
-                    /*try {
-
-                        var keyPair: KeyPair = enc.generateKeyPair()
-                        println("encriptedPubilcKey  keyPair " +
-                                ":: "+keyPair)
-
-                        var encriptedData:String=enc.encrypt(jsonData.toString(),keyPair.public)
-
-                        println("encriptedPubilcKey:: "+encriptedData)
-                        vehicleRegviewModel.getTagList(
-                            AppConstants.tenant,
-                            AppConstants.authorization,
-                            encriptedData
-                        )
-
-                    }catch (e:Exception){
-                        e.printStackTrace()
-                    }*/
-                   /* try {
-                       *//* enc.encodeRequest(jsonData, "1234123412341238", "FINOWERIZE")
-                        val responseMap: Map<String, String> = HashMap()*//*
-                        val PublicKeyStr = assets.open("com.agent.fasttag.pubkey.pem").bufferedReader().use {
-                            it.readText()
-                        }
-
-                        println("PublicKeyStr:: "+PublicKeyStr)
-                        var encriptData=Encryption(this).encrypt(jsonData.toString(), publicKeyString = PublicKeyStr)
-
-                        println("PublicKeyStr encriptData:: "+encriptData)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }*/
 
                 }else{
                     AppConstants.showNoInternetConnectionMessageAlert(this)
@@ -287,13 +240,18 @@ class DocumentsDetailsActivity : AppCompatActivity() {
            else if (vehicleNumberVal == "") {
                 Toast.makeText(this, "Please enter vehicle number", Toast.LENGTH_SHORT).show()
 
-            }/* else if (rcBackSideFile == null) {
+            }
+            else if (rcFrontSideFile == null) {
+                Toast.makeText(this, "Please select RC front side image", Toast.LENGTH_SHORT).show()
+
+            }
+            else if (rcBackSideFile == null) {
                 Toast.makeText(this, "Please select RC back side image", Toast.LENGTH_SHORT).show()
 
             } else if (customerFile == null) {
                 Toast.makeText(this, "Please select customer image", Toast.LENGTH_SHORT).show()
 
-            }*/
+            }
 
             else {
                 if(mTagId=="VC4"){
@@ -374,7 +332,7 @@ class DocumentsDetailsActivity : AppCompatActivity() {
             map,
             getUploadFileMultipartBody(rcBackSideFile!!,"addressProof"),
             getUploadFileMultipartBody(customerFile!!,"idProof"),
-            getUploadFileMultipartBody(rcBackSideFile!!,"ackDocument")
+            getUploadFileMultipartBody(rcFrontSideFile!!,"ackDocument")
         )
     }
     private fun updateCustomerdetails(isAdditionalVehicle:Boolean,kitNumber:String,vehicleNumber:String){
@@ -414,9 +372,10 @@ class DocumentsDetailsActivity : AppCompatActivity() {
             when(it.status){
                 Status.SUCCESS ->{
 //                    showResponseMessageAlert(this,it.data!!.message)
+                    println("DATA CODE::"+it.data?.code)
                     if(it.data?.code==0){
 //                        saveCustomerDetails = "success"
-                        Toast.makeText(this,it.data!!.message,Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(this,it.data!!.message,Toast.LENGTH_SHORT).show()
                         if (!kitNumberUpdate){
                             if(AppConstants.isNetworkAvailable(this)) {
                                 callVehicleRegistration()
@@ -500,11 +459,11 @@ class DocumentsDetailsActivity : AppCompatActivity() {
                             }
                         }
                         binding.etReplaceProfileIdInput.setOnClickListener {
-                            var profileID_New= binding.etTagIdInput.text.toString()
-
+                            var profileID_New= binding.etReplaceTagIdInput.text.toString().trim()
+                            println("profileID_New:: "+profileID_New)
                             val valuesMatchingKEY1 = mapWithDuplicateKeys.filter { it.first== profileID_New }.map{it.second}
 
-                            println("profilerIdsArry:: $valuesMatchingKEY1")
+                            println("profilerIdsArry:: $mapWithDuplicateKeys")
 
                             if(valuesMatchingKEY1.isNotEmpty()) {
                                 openDialog(
@@ -564,6 +523,14 @@ class DocumentsDetailsActivity : AppCompatActivity() {
                         R.layout.spinner_item,
                         tagListResponseData.result.cardList
                     )
+
+                     openDialog(getString(R.string.old_kit_no_by_replace), tagListResponseData.result.cardList,)
+
+                     binding.etOldKitNumberInput.setOnClickListener {
+                         if(tagListResponseData!=null && tagListResponseData.result!=null && tagListResponseData.result.cardList.isNotEmpty()){
+                             openDialog(getString(R.string.old_kit_no_by_replace), tagListResponseData.result.cardList)
+                         }
+                     }
 
                     // Give the suggestion after 1 words.
 
@@ -717,7 +684,7 @@ class DocumentsDetailsActivity : AppCompatActivity() {
              AppConstants.country,stateVal,cityVal,addressLine1Val,addressLine2Val,addressLine1Val,
              AppConstants.phoneNumber,lastNameVal,firstNameVal)*/
             }else{
-                Toast.makeText(this, "Replace Tag  "+tagReplaceResponseData.exception.exception.detailMessage, Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Replace Tag unsuccessful.Please try again", Toast.LENGTH_SHORT).show()
 
             }
 
@@ -940,7 +907,7 @@ class DocumentsDetailsActivity : AppCompatActivity() {
     private fun setImage(bitmap:Bitmap,file:File){
         when (imageFrom){
             1->{binding.rcFrontSide.setImageBitmap(bitmap)
-            }
+                rcFrontSideFile=file}
             2->{binding.rcBackSide.setImageBitmap(bitmap)
                 rcBackSideFile=file}
 //            3->binding.idDocFrontSide.setImageBitmap(bitmap)
@@ -970,6 +937,9 @@ class DocumentsDetailsActivity : AppCompatActivity() {
             else if(dropFrom == getString(R.string.Select_Profile_Id)){
                 binding.etProfileIdInput.setText(listArr[position])
                 binding.etReplaceProfileIdInput.setText(listArr[position])
+            }
+            else if(dropFrom == getString(R.string.old_kit_no_by_replace)){
+                binding.etOldKitNumberInput.setText(listArr[position])
             }
             else{
                 binding.etSelectAddReplaceKitInput.setText(listArr[position])
@@ -1088,12 +1058,20 @@ class DocumentsDetailsActivity : AppCompatActivity() {
          binding.etProfileIdInput.setText("")
          binding.etTagIdInput.setText("")
         var serialNumber= binding.etKitNumberInput.text.toString()
-        getTagsBySerialNumberRequest(serialNumber)
+        if(serialNumber!=null && serialNumber!="") {
+            getTagsBySerialNumberRequest(serialNumber)
+        }else{
+            Toast.makeText(this,"Please enter New kit Number",Toast.LENGTH_SHORT).show()
+        }
     }
     public fun getTagBySerialNumberForReplace(view:View){
 //        binding.etKitNumberInput.setText("652210-108-1034162")
         var serialNumber= binding.etNewKitNumberInput.text.toString()
-        getTagsBySerialNumberRequest(serialNumber)
+        if(serialNumber!=null && serialNumber!="") {
+            getTagsBySerialNumberRequest(serialNumber)
+        }else{
+            Toast.makeText(this,"Please enter New kit Number",Toast.LENGTH_SHORT).show()
+        }
     /*    AppConstants.launchSunsetDialog(this)
         if(serialNumber==null || serialNumber==""){
             Toast.makeText(this,"Please enter serial number",Toast.LENGTH_SHORT).show()
@@ -1131,6 +1109,11 @@ class DocumentsDetailsActivity : AppCompatActivity() {
 //        val btnClose = view.findViewById<ImageView>(R.id.idIVCourse)
         val teamLeadsListAdapter = VehicleNumbersAdapter(vehicleLeadsResponseData!!) {
             println("TeamLeadsListAdapter:: Click$it")
+            binding.etOldKitNumberInput.setText("")
+            binding.etNewKitNumberInput.setText("")
+            binding.etReplaceTagIdInput.setText("")
+            binding.etReplaceProfileIdInput.setText("")
+
             binding.addReplaceRegistrationNumberInput.setText(it.vehicleNumber)
 //            selectedTeamLeadData=it
             dialog.dismiss()

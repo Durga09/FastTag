@@ -15,6 +15,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Html
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -95,7 +96,7 @@ class PhonePayPaymentGatewayActivity: AppCompatActivity() {
         setContentView(binding.root)
         PhonePe.init(this,PhonePeEnvironment.SANDBOX,MERCHANT_ID,"")
         loginFrom = AppConstants.loginFrom
-        binding.tvPhonePayAmount.text =getString(R.string.Rs)+" "+(AppConstants.referralCodeVal*100)
+        binding.tvPhonePayAmount.text =getString(R.string.Rs)+" "+(AppConstants.referralCodeVal)
         var string_signature = PhonePe.getPackageSignature()
          fasTagPref = FasTagSharedPreference.customPreference(this, FasTagSharedPreference.CUSTOM_PREF_NAME)
          parentId=fasTagPref.USER_parentId!!
@@ -126,15 +127,23 @@ class PhonePayPaymentGatewayActivity: AppCompatActivity() {
         setupVehicleRegviewModelViewModel()
         CallObserveuploadVehicleRegistration()
         if(AppConstants.referralCodeKey==getString(R.string.zero)){
-
+            binding.payButton.visibility=View.GONE
+            binding.rlAmount.visibility=View.GONE
+            binding.tvDontDistrub.visibility=View.VISIBLE
             getTransactionId()
+
+        }else{
+            binding.payButton.visibility=View.VISIBLE
+            binding.rlAmount.visibility=View.VISIBLE
+            binding.tvDontDistrub.visibility=View.GONE
+
 
         }
     }
     private fun initiatePhonePeRequest(MERCHANT_T_ID:String,callBackUrl:String){
         MERCHANT_TID = MERCHANT_T_ID
         var requestData= PhonePayRequest(MERCHANT_ID,MERCHANT_T_ID,
-            "MUID123",AppConstants.referralCodeVal,
+            "MUID123",AppConstants.referralCodeVal*100,
             callBackUrl.replace("\\/","/"),loginUserPhoneNumber,
             PaymentInstrument(paymentType))
 

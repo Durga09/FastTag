@@ -62,12 +62,13 @@ class CreateAgentActivity : AppCompatActivity() {
 
     }
     private fun initView(){
+        binding.createAgentHeaderLayout.ivToolBarBack.visibility= View.VISIBLE
 
-        binding.etFirstNameInput.setText("durga Prasad")
+     /*   binding.etFirstNameInput.setText("durga Prasad")
         binding.etLastNameInput.setText("Prasad")
         binding.etFirstNameInput.setText("Durga")
         binding.etEmailInput.setText("durga@gamil.com")
-        binding.etPhoneNumberInput.setText("9177883161")
+        binding.etPhoneNumberInput.setText("9177883161")*/
 
         var bundle :Bundle ?=intent.extras
         roleFrom = bundle!!.getString(getString(R.string.role_from))!!
@@ -106,10 +107,23 @@ class CreateAgentActivity : AppCompatActivity() {
             }else if( lastNameVal == ""){
 
                 AppConstants.showMessageAlert(this,getString(R.string.please_enter_last_name))
-            }else if(emailVal == ""){
+            }else if(phoneNumberVal==""){
+                AppConstants.showMessageAlert(this,getString(R.string.please_enter_phone_number))
+
+            }
+            else if(!AppConstants.isValidPhoneNumber(phoneNumberVal)){
+                AppConstants.showMessageAlert(this,getString(R.string.please_enter_valid_phone_number))
+
+            }
+            else if(emailVal == ""){
                 AppConstants.showMessageAlert(this,getString(R.string.please_enter_email))
 
-            }else{
+            }
+            else if(!AppConstants.isValidEmail(emailVal)){
+                AppConstants.showMessageAlert(this,getString(R.string.please_enter_valid_email))
+
+            }
+            else{
                 val fasTagPref = FasTagSharedPreference.customPreference(this, FasTagSharedPreference.CUSTOM_PREF_NAME)
                  var parentId=fasTagPref.USER_parentId!!
                 if(rollID == AppConstants.agentRollId && loginFrom!=getString(R.string.team_lead)){
@@ -139,6 +153,17 @@ class CreateAgentActivity : AppCompatActivity() {
         if(rollID == AppConstants.agentRollId && loginFrom!=getString(R.string.team_lead)){
             callGetAllTeamLeads()
         }
+    }
+    public fun back(view:View){
+        onBackPressed()
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        overridePendingTransition(
+            R.anim.slide_in_left,
+            R.anim.slide_out_right
+        )
     }
     private fun callGetAllTeamLeads(){
         AppConstants.launchSunsetDialog(this)
