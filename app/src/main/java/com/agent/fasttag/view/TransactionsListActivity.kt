@@ -133,7 +133,7 @@ class TransactionsListActivity : AppCompatActivity() {
             when (it.status) {
                 Status.SUCCESS -> {
 //                    AppConstants.showMessageAlert(this,it.data!!.message)
-                    if (it.data?.reponseData!!.isNotEmpty()){
+                    if (it.data?.reponseData?.isNotEmpty() == true){
                        var transactionData= sortBydateList(it.data?.reponseData)
                     var trasactionsListAdapter = TransactionsListAdapter(transactionData) {
                         println("TeamLeadsListAdapter:: Click$it")

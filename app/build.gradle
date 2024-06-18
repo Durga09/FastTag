@@ -11,12 +11,26 @@ android {
         applicationId "com.agent.fasttag"
         minSdk 24
         targetSdk 34
-        versionCode 1
+        versionCode 2
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+    signingConfigs {
+        debug {
+            storePassword 'Ashwitha@777'
+            keyAlias 'Ashwitha'
+            keyPassword 'Ashwitha@777'
+            storeFile file('keystore/fasTag.jks')
+        }
+        release {
+            storePassword 'password'
+            keyAlias 'Ashwitha'
+            keyPassword 'Ashwitha@777'
+            storeFile file('keystore/fasTag.jks')
 
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false

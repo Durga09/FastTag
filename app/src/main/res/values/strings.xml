@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FasTag</string>
+    <string name="app_name">StarRoutes</string>
     <string name="login_text">Login</string>
     <string name="edit_text_username">Username</string>
     <string name="edit_text_password">Password</string>

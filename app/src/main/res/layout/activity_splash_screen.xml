@@ -11,7 +11,7 @@
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Welcome to FasTag "
+        android:text="Welcome to Starroutes"
         android:textColor="@color/orange_bg"
         android:textSize="20sp"
         android:fontFamily="@font/montserrat_regular"

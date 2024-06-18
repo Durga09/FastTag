@@ -9,6 +9,14 @@ data class GenerateOTPJson (
 
 )
 
+data class GenerateOTPReqJson (
+
+    val mobileNumber: String,
+    val entityId: String="",
+    val businessType: String="",
+    val entityType: String=""
+
+)
 data class LoginRequestJson(
 
     val PhoneNumber:String,

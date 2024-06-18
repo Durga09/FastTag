@@ -65,7 +65,7 @@ class VehicleRegistration : AppCompatActivity() {
         binding.headerLayout.ivToolBarBack.visibility=View.VISIBLE
         binding.headerLayout.tvToolbarHederTitle.text=getString(R.string.vehicle_details)
         binding.etVehicleClassInput.setText(getString(R.string.CUSTOMER))
-        binding.etPhoneNumberInput.setText("2233778899")
+//        binding.etPhoneNumberInput.setText("2233778899")
         vehicleClassArr.add(getString(R.string.CUSTOMER))
         vehicleClassArr.add(getString(R.string.TRUCK_RETAIL))
         vehicleClassArr.add(getString(R.string.TRUCK_CORPORATE))
