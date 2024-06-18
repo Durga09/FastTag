@@ -224,6 +224,10 @@ class AgentHomeActivity : AppCompatActivity() {
             AppConstants.slideToRightAnim(this)
 
         }
+        binding.leftDrawerMenu.ivNavClose.setOnClickListener {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+
+        }
         binding.leftDrawerMenu.clCsv.setOnClickListener {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
 
