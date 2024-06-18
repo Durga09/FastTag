@@ -85,8 +85,8 @@ class AgentLoginActivity : AppCompatActivity() {
 
     fun initView(){
 
-        binding.editUsernameInput.setText("1122334455")
-        binding.editPasswordInput.setText("Jai@123#")
+//        binding.editUsernameInput.setText("1122334455")
+//        binding.editPasswordInput.setText("Jai@123#")
         binding.btnSignup.setOnClickListener {
             var intent=  Intent(this, AgentSignupActivity::class.java)
             intent.putExtra(getString(R.string.login_from),getString(R.string.agent))
