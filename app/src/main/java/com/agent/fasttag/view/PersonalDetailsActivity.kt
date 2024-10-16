@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.agent.fasttag.R
 import com.agent.fasttag.databinding.ActivityPersonalDetailsBinding
 import com.agent.fasttag.databinding.LayoutDailogListViewBinding
+import com.agent.fasttag.encript.TestEncryptionNew
 import com.agent.fasttag.view.adapter.CommanAdapter
 import com.agent.fasttag.view.api.RetrofitService
 import com.agent.fasttag.view.model.*
@@ -83,18 +84,19 @@ class PersonalDetailsActivity : AppCompatActivity() {
         documentsTypeArr.add("VoterId")
         documentsTypeArr.add("Aadhar card")
         documentsTypeArr.add("Diving License")
-       /* binding.etFirstNameInput.setText("Goutham")
-        binding.etLastNameInput.setText("Arunagiri")
-        binding.etDateOfBirthInput.setText("1998-05-31")
-        binding.etVehicleNumberInput.setText("TS10FB9977")
-        binding.etAddressLineInput1.setText("Paravathi Flats puzhitivakkam")
-        binding.etAddressLineInput2.setText("21/A Kalaimagal street")
-        binding.etGenderInput.setText("Male")
-        binding.etDistrictInput.setText("Rangareddy")
-        binding.etCityInput.setText("Chennai")
-        binding.etEmailInput.setText("goutham@m2p.in")
-        binding.etStateInput.setText("Tamilnadu")
-        binding.etPinCodeInput.setText("500034")*/
+        AppConstants.entityType=getString(R.string.CUSTOMER)
+       /*  binding.etFirstNameInput.setText("Goutham")
+         binding.etLastNameInput.setText("Arunagiri")
+         binding.etDateOfBirthInput.setText("1998-05-31")
+         binding.etVehicleNumberInput.setText("TS10FB9977")
+         binding.etAddressLineInput1.setText("Paravathi Flats puzhitivakkam")
+         binding.etAddressLineInput2.setText("21/A Kalaimagal street")
+         binding.etGenderInput.setText("Male")
+         binding.etDistrictInput.setText("Rangareddy")
+         binding.etCityInput.setText("Chennai")
+         binding.etEmailInput.setText("goutham@m2p.in")
+         binding.etStateInput.setText("Tamilnadu")
+         binding.etPinCodeInput.setText("500034")*/
 //        binding.etDocumentNumberInput.setText("YTRDF5455P")
 //        binding.etSelectDocumentTypeInput.setText("PAN")
         binding.etDateOfBirthInput.setOnClickListener {
@@ -110,12 +112,19 @@ class PersonalDetailsActivity : AppCompatActivity() {
             openDialog(getString(R.string.select_document_type), documentsTypeArr)
         }
         binding.getotp.setOnClickListener {
-        viewModel!!.getGenerateOtp(AppConstants.tenant, AppConstants.partnerId, AppConstants.partnerToken, getOtpRequestJson())
+            var requestJson=getOtpRequestJson()
+            println("encriptedString requestJson:: $requestJson")
+
+            var encriptedString= TestEncryptionNew(this).getEncriptedRequestData(requestJson)
+
+            println("encriptedString:: $encriptedString")
+
+        viewModel!!.getGenerateOtp(AppConstants.tenant, AppConstants.partnerId, AppConstants.partnerToken, encriptedString)
 
         }
         }
     private fun setupViewModel() {
-        retrofitService = RetrofitService.getInstance(AppConstants.baseURL)
+        retrofitService = RetrofitService.getInstance(AppConstants.SSLTestBaseUrl)
         var repository = FasTagRepository(retrofitService!!)
         viewModel = ViewModelProvider(
             this,
@@ -125,47 +134,66 @@ class PersonalDetailsActivity : AppCompatActivity() {
     private fun setUpObserver(){
         viewModel.customerRegistrationData().observe(this) {
             println("customerRegistration Success:: " + it)
+            var requestData= DeleteCustomerRequestJson(customerId)
+            val loginRequestJsonData = Gson().toJson(requestData)
+            val jsonObject = JSONObject(loginRequestJsonData)
+            val request = jsonObject.toString().toRequestBody("application/json".toMediaTypeOrNull());
          AppConstants.cancelSunsetDialog()
             when (it.status) {
                 Status.SUCCESS -> {
+                    var header=it.data?.headers
+              var responseData=  TestEncryptionNew(this).decryptMessage(it.data?.body,header?.key,header?.hash,header?.refNo)
+                    var personalDetailsResponseData=Gson().fromJson(responseData,PersonalDetailsResponseData::class.java)
+                    println("customerRegistration responseData:: "+personalDetailsResponseData)
+                    println("customerRegistration responseData:: "+personalDetailsResponseData.result)
 
-                    if(it.data?.result!=null ) {
+                    if(personalDetailsResponseData.result!=null ) {
 
-                        if (it.data?.result.success) {
-                            Toast.makeText(
-                                this,
-                                "Success "+it.data?.result.entityId,
-                                Toast.LENGTH_LONG
-                            ).show()
-                            startActivity(Intent(this, DocumentsDetailsActivity::class.java))
-                            overridePendingTransition(
-                                R.anim.slide_in_right,
-                                R.anim.slide_out_left
-                            )
-                        } else {
-                            Toast.makeText(
-                                this,
-                                it.data?.exception!!.shortMessage,
-                                Toast.LENGTH_LONG
-                            ).show()
-                            if(customerId!=""){
-                                var requestData= DeleteCustomerRequestJson(customerId)
-                                val loginRequestJsonData = Gson().toJson(requestData)
-                                val jsonObject = JSONObject(loginRequestJsonData)
-                                val request = jsonObject.toString().toRequestBody("application/json".toMediaTypeOrNull());
-                                println("DeleteCustomerRequestJson:: $request")
-                                AppConstants.launchSunsetDialog(this)
-                                if(AppConstants.isNetworkAvailable(this)) {
-                                    viewModel.deleteCustomerDetailsRequest(request)
-                                }else{
-                                    AppConstants.showNoInternetConnectionMessageAlert(this)
-                                }
-                            }
-                            /*  startActivity(Intent(this, DocumentsDetailsActivity::class.java))
+                          if (personalDetailsResponseData.result.success) {
+                              Toast.makeText(
+                                  this,
+                                  "Success "+personalDetailsResponseData.result.entityId,
+                                  Toast.LENGTH_LONG
+                              ).show()
+                              startActivity(Intent(this, DocumentsDetailsActivity::class.java))
+                              overridePendingTransition(
+                                  R.anim.slide_in_right,
+                                  R.anim.slide_out_left
+                              )
+                          } else {
+                              Toast.makeText(
+                                  this,
+                                  personalDetailsResponseData.exception!!.shortMessage,
+                                  Toast.LENGTH_LONG
+                              ).show()
+                              if(customerId!=""){
+
+                                  println("DeleteCustomerRequestJson:: $request")
+                                  AppConstants.launchSunsetDialog(this)
+                                  if(AppConstants.isNetworkAvailable(this)) {
+                                      viewModel.deleteCustomerDetailsRequest(request)
+                                  }else{
+                                      AppConstants.showNoInternetConnectionMessageAlert(this)
+                                  }
+                              }
+                             /*  startActivity(Intent(this, DocumentsDetailsActivity::class.java))
                               overridePendingTransition(
                                   R.anim.slide_in_right,
                                   R.anim.slide_out_left
                               )*/
+                        }
+                    }else{
+                        println("DeleteCustomerRequestJson:: $request")
+
+                        Toast.makeText(
+                            this,
+                            personalDetailsResponseData.exception!!.shortMessage,
+                            Toast.LENGTH_LONG
+                        ).show()
+                        if(AppConstants.isNetworkAvailable(this)) {
+                            viewModel.deleteCustomerDetailsRequest(request)
+                        }else{
+                            AppConstants.showNoInternetConnectionMessageAlert(this)
                         }
                     }
                 }
@@ -213,11 +241,14 @@ class PersonalDetailsActivity : AppCompatActivity() {
                         vehicleData)
                         if(AppConstants.isNetworkAvailable(this)) {
                             AppConstants.launchSunsetDialog(this)
-                            viewModel.customerRegistration(
+
+                           var encriptedString= TestEncryptionNew(this).getEncriptedRequestData(getRequestJson())
+                            println("encriptedString:: $encriptedString")
+                          viewModel.customerRegistration(
                                 AppConstants.tenant,
                                 AppConstants.partnerId,
                                 AppConstants.partnerToken,
-                                getRequestJson()
+                              encriptedString
                             )
                         }else{
                             AppConstants.showNoInternetConnectionMessageAlert(this)
@@ -246,7 +277,7 @@ class PersonalDetailsActivity : AppCompatActivity() {
 //                    showResponseMessageAlert(this,it.data!!.message)
                     if(it.data?.code==0){
 //                        saveCustomerDetails = "success"
-                        Toast.makeText(this,it.data!!.message,Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(this,it.data!!.message,Toast.LENGTH_SHORT).show()
                     }
                 }
                 Status.LOADING -> {
@@ -286,10 +317,49 @@ class PersonalDetailsActivity : AppCompatActivity() {
 //                R.anim.slide_in_right,
 //                R.anim.slide_out_left
 //            )
-             if(AppConstants.isNetworkAvailable(this)) {
-                 callSaveCustomerdetails()
-             }else{
-                 AppConstants.showNoInternetConnectionMessageAlert(this)
+             if(firstNameVal==""){
+                 Toast.makeText(this,"Please enter first name",Toast.LENGTH_LONG).show()
+             }
+             else if(lastNameVal==""){
+                 Toast.makeText(this,"Please enter lasts name",Toast.LENGTH_LONG).show()
+             }
+             else if(genderVal==""){
+                 Toast.makeText(this,"Please select gender",Toast.LENGTH_LONG).show()
+             }
+             else if(dobVal==""){
+                 Toast.makeText(this,"Please enter DOB",Toast.LENGTH_LONG).show()
+             }
+             else if(documentTypeVal==""){
+                 Toast.makeText(this,"Please select document type",Toast.LENGTH_LONG).show()
+             }
+             else if(documentIdVal==""){
+                 Toast.makeText(this,"Please enter document number",Toast.LENGTH_LONG).show()
+             }
+             else if(emailVal==""){
+                 Toast.makeText(this,"Please enter email id",Toast.LENGTH_LONG).show()
+             }
+
+             else if(addressLine1Val==""){
+                 Toast.makeText(this,"Please enter address line 1",Toast.LENGTH_LONG).show()
+             }
+             else if(addressLine2Val==""){
+                 Toast.makeText(this,"Please enter address line 2",Toast.LENGTH_LONG).show()
+             }
+             else if(cityVal==""){
+                 Toast.makeText(this,"Please enter city",Toast.LENGTH_LONG).show()
+             }
+             else if(districtVal==""){
+                 Toast.makeText(this,"Please enter district",Toast.LENGTH_LONG).show()
+             }
+             else if(stateVal==""){
+                 Toast.makeText(this,"Please select state",Toast.LENGTH_LONG).show()
+             }
+             else {
+                 if (AppConstants.isNetworkAvailable(this)) {
+                     callSaveCustomerdetails()
+                 } else {
+                     AppConstants.showNoInternetConnectionMessageAlert(this)
+                 }
              }
 
 
@@ -378,10 +448,10 @@ class PersonalDetailsActivity : AppCompatActivity() {
         }
     fun getOtpRequestJson():String{
         val mobileNumber=AppConstants.phoneNumber
-        val data =GenerateOTPJson(mobileNumber,AppConstants.entityId,"CUSOTMER","")
+        val data =GenerateOTPReqJson(mobileNumber,AppConstants.entityId,"LQFLEET101","CUSTOMER")
         val vehicleRegData = Gson().toJson(data)
 //        val jsonObject = JSONObject(vehicleRegData)
-//        println("jsonObject:: $jsonObject")
+        println("jsonObject:: $vehicleRegData")
         return  vehicleRegData
     }
         private fun getRequestJson() : String {
@@ -411,6 +481,7 @@ class PersonalDetailsActivity : AppCompatActivity() {
 
             var personalDetailsReqJson = PersonalDetailsReqJson(
                 dateInfo = arrayListOf(dateInfo),
+
                 communicationInfo = arrayListOf(communicationInfo),
                 addressInfo = arrayListOf(addressInfo),
                 kycInfo = arrayListOf(KycInfo),
@@ -456,6 +527,7 @@ class PersonalDetailsActivity : AppCompatActivity() {
 
             )
             val jsonData = Gson().toJson(personalDetailsReqJson)
+            println("Personal details JSON OBject:: "+jsonData)
             return jsonData
         }
 
@@ -463,13 +535,22 @@ class PersonalDetailsActivity : AppCompatActivity() {
         viewModel!!.generateOtpData().observe(this, Observer {
             when (it.status) {
                 Status.SUCCESS -> {
+                    var header=it.data?.headers
+
+                    println("generateOtpData encript Success:: " + it)
+
                     AppConstants.cancelSunsetDialog()
-                    if(it.data?.result!!.success=="true") {
-                        println("entityId" + it.data?.result!!.entityId)
+
+
+                    var responseData=  TestEncryptionNew(this).decryptMessage(it.data?.body,header?.key,header?.hash,header?.refNo)
+                    println("generateOtpData decript responseData:: "+responseData)
+                    var oTPResponseData=Gson().fromJson(responseData,OTPResponseData::class.java)
+                 if(oTPResponseData.result.success=="true") {
+                        println("entityId" + oTPResponseData.result.entityId)
                         AppConstants.showMessageAlert(this,"OTP has sent to "+AppConstants.entityId)
-                        AppConstants.entityId = it.data?.result!!.entityId
+                        AppConstants.entityId = oTPResponseData.result.entityId
                     }else{
-                        Toast.makeText(this,  it.data?.result!!.entityId, Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, oTPResponseData.result.entityId, Toast.LENGTH_LONG).show()
 
                     }
 

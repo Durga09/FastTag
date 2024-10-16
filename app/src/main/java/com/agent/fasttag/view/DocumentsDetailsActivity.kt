@@ -266,6 +266,7 @@ class DocumentsDetailsActivity : AppCompatActivity() {
 
             }
         }else{
+//            binding.etNewKitNumberInput.setText("652210-108-1034145")
             oldKitNumber=binding.etOldKitNumberInput.text.toString().trim()
             newKitNumber=binding.etNewKitNumberInput.text.toString().trim()
             var replaceProfile_id=binding.etReplaceProfileIdInput.text.toString().trim()
@@ -409,7 +410,6 @@ class DocumentsDetailsActivity : AppCompatActivity() {
             var header=it.data?.headers
 
             var responseData=  TestEncryptionNew(this).decryptMessage(it.data?.body,header?.key,header?.hash,header?.refNo)
-            println("getTagList responseData:: $responseData")
             var vehicleRegResponseData=Gson().fromJson(responseData,VehicleRegResponseData::class.java)
             println("vehicleRegResponseData responseData:: "+vehicleRegResponseData)
             println("vehicleRegResponseData responseData:: "+vehicleRegResponseData.result)
@@ -671,10 +671,7 @@ class DocumentsDetailsActivity : AppCompatActivity() {
             var header=it.data?.headers
 
             var responseData=  TestEncryptionNew(this).decryptMessage(it.data?.body,header?.key,header?.hash,header?.refNo)
-            println("tagReplaceResponseData responseData:: $responseData")
             var tagReplaceResponseData=Gson().fromJson(responseData,TagReplaceResponseData::class.java)
-            println("tagReplaceResponseData responseData:: "+tagReplaceResponseData)
-            println("tagReplaceResponseData responseData:: "+tagReplaceResponseData.result)
             if(tagReplaceResponseData.exception==null) {
                 Toast.makeText(this, " Replace Tag Success.", Toast.LENGTH_SHORT).show()
 
@@ -1034,6 +1031,7 @@ class DocumentsDetailsActivity : AppCompatActivity() {
             entityId = vehicleNumberVal)
 
         val jsonData = Gson().toJson(vehicleRegReqJsonData)
+        println("vehicle Registration JsonObj:: "+jsonData)
         return jsonData
     }
     private fun setupScanner() {
@@ -1066,6 +1064,8 @@ class DocumentsDetailsActivity : AppCompatActivity() {
     }
     public fun getTagBySerialNumberForReplace(view:View){
 //        binding.etKitNumberInput.setText("652210-108-1034162")
+//        binding.etNewKitNumberInput.setText("652210-108-1034145")
+
         var serialNumber= binding.etNewKitNumberInput.text.toString()
         if(serialNumber!=null && serialNumber!="") {
             getTagsBySerialNumberRequest(serialNumber)
@@ -1110,7 +1110,7 @@ class DocumentsDetailsActivity : AppCompatActivity() {
         val teamLeadsListAdapter = VehicleNumbersAdapter(vehicleLeadsResponseData!!) {
             println("TeamLeadsListAdapter:: Click$it")
             binding.etOldKitNumberInput.setText("")
-            binding.etNewKitNumberInput.setText("")
+//            binding.etNewKitNumberInput.setText("")
             binding.etReplaceTagIdInput.setText("")
             binding.etReplaceProfileIdInput.setText("")
 
