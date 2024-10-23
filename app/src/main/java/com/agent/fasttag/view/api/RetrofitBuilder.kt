@@ -23,11 +23,13 @@ object RetrofitBuilder {
 
     // private const val BASE_URL = "http://172.17.0.40:7777/api/api/"
     // https://www.burbank.com.au/api/api
+    var BASE_URL= "https://loginmanagement2023.azurewebsites.net/api/"
 
 
     // private const val BASE_URL = "http://dev.burbank.com.au/api/api/"
     // private const val BASE_URL = "http://10.6.45.14:8081/api/api/"
-    private const val BASE_URL = "https://kycuat.yappay.in/kyc/custome/"
+//    private const val BASE_URL = "https://kycuat.yappay.in/kyc/custome/"
+//    private const val BASE_URL = "https://ssltest.yappay.in/"
 
     val gson: Gson = GsonBuilder()
         .setLenient()

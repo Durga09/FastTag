@@ -34,6 +34,7 @@ import com.agent.fasttag.databinding.ChhoseImageFromBinding
 import com.agent.fasttag.databinding.LayoutDailogListViewBinding
 import com.agent.fasttag.databinding.LayoutTlBottomSheetBinding
 import com.agent.fasttag.encript.TestEncryptionNew
+import com.agent.fasttag.view.AgentHomeActivity
 import com.agent.fasttag.view.adapter.CommanAdapter
 import com.agent.fasttag.view.adapter.VehicleNumbersAdapter
 import com.agent.fasttag.view.api.RetrofitService
@@ -701,7 +702,7 @@ class DocumentsDetailsActivity : AppCompatActivity() {
         }
     }
     fun unlockKit(kitNumber:String) {
-//                binding.scannedKtNumber.setText("34161FA82073E764D9E85321")
+                binding.scannedKtNumber.setText("34161FA82033E764D9FB0C21")
 
         var kitNo =kitNumber
         println("kitNumber:: "+kitNumber)

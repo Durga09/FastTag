@@ -124,7 +124,7 @@ class PersonalDetailsActivity : AppCompatActivity() {
         }
         }
     private fun setupViewModel() {
-        retrofitService = RetrofitService.getInstance(AppConstants.SSLTestBaseUrl)
+        retrofitService = RetrofitService.getInstance(AppConstants.BASE_URL)
         var repository = FasTagRepository(retrofitService!!)
         viewModel = ViewModelProvider(
             this,

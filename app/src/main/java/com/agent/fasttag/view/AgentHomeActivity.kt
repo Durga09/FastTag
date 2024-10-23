@@ -70,7 +70,7 @@ class AgentHomeActivity : AppCompatActivity() {
 
     }
     private fun setupViewModel() {
-        retrofitService = RetrofitService.getInstance(AppConstants.SSLTestBaseUrl)
+        retrofitService = RetrofitService.getInstance(AppConstants.baseURL)
         var repository = FasTagRepository(retrofitService!!)
         viewModel = ViewModelProvider(
             this,

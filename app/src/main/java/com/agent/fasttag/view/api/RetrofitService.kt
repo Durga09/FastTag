@@ -15,22 +15,60 @@ import retrofit2.http.*
 
 
 interface RetrofitService {
+
+
+
     @Headers( "Content-Type: application/json; charset=utf-8")
-    @POST("kyc/customer/generate/otp")
-    suspend fun generateOtp(@Header("TENANT")  TENANT:String,@Header("partnerId")  partnerId:String,
+    @POST()
+    suspend fun sendEncriptData(@Url url:String,@Header("TENANT")  TENANT:String,@Header("partnerId")  partnerId:String,@Header("EndPoint")  EndPoint:String,
+                            @Header("partnerToken")  partnerToken:String, @Body jsonObject: RequestBody): Response<GetEncriptResponseData>
+
+    @Headers( "Content-Type: application/json; charset=utf-8")
+    @POST()
+    suspend fun vehicleRegistrationEncript(@Url url:String,@Header("TENANT")  TENANT:String,
+                                    @Header("Authorization")  partnerToken:String,@Header("EndPoint")  EndPoint:String, @Body jsonObject: RequestBody): Response<GetEncriptResponseData>
+
+
+    @Headers( "Content-Type: application/json; charset=utf-8")
+    @POST()
+    suspend fun getTagInfoEncript(@Url url:String,@Header("TENANT")  TENANT:String,@Header("EndPoint")  EndPoint:String,@Header("Authorization")  authorization:String,@Body jsonObject: RequestBody): Response<GetEncriptResponseData>
+
+    @Headers( "Content-Type: application/json; charset=utf-8")
+    @POST()
+    suspend fun tagClosureEncript(@Url url:String,@Header("TENANT")  TENANT:String,@Header("EndPoint")  EndPoint:String,@Header("Authorization")  authorization:String,@Body jsonObject: RequestBody): Response<GetEncriptResponseData>
+
+    @Headers( "Content-Type: application/json; charset=utf-8")
+    @POST()
+    suspend fun unLockKit(@Url url:String,@Header("TENANT")  TENANT:String,@Header("EndPoint")  EndPoint:String,@Body jsonObject: RequestBody): Response<GetEncriptResponseData>
+
+
+    @Headers( "Content-Type: application/json; charset=utf-8")
+    @POST
+    suspend fun paymentWallet(@Url url:String,@Header("TENANT")  TENANT:String,@Header("EndPoint")  EndPoint:String,@Body jsonObject: RequestBody): Response<GetEncriptResponseData>
+
+    /* @Headers( "Content-Type: application/json; charset=utf-8")
+     @POST("kyc/customer/generate/otp")
+     suspend fun generateOtp(@Header("TENANT")  TENANT:String,@Header("partnerId")  partnerId:String,
+                             @Header("partnerToken")  partnerToken:String, @Body jsonObject: RequestBody): Response<GetEncriptResponseData>*/
+
+    @Headers( "Content-Type: application/json; charset=utf-8")
+//    @POST("kyc/customer/generate/otp")
+//    @POST("proxy/v1/GetEncryptedData")
+    @POST()
+    suspend fun generateOtp(@Url url:String,@Header("TENANT")  TENANT:String,@Header("partnerId")  partnerId:String,@Header("EndPoint")  EndPoint:String,
                             @Header("partnerToken")  partnerToken:String, @Body jsonObject: RequestBody): Response<GetEncriptResponseData>
 
     @Headers( "Content-Type: application/json; charset=utf-8")
     @POST("kyc/v2/register")
-    suspend fun customerRegistration(@Header("TENANT")  TENANT:String,@Header("partnerId")  partnerId:String,
+    suspend fun customerRegistration(@Header("TENANT")  TENANT:String,@Header("partnerId")  partnerId:String,@Header("EndPoint")  EndPoint:String,
                             @Header("partnerToken")  partnerToken:String, @Body jsonObject: RequestBody): Response<GetEncriptResponseData>
     @Headers( "Content-Type: application/json; charset=utf-8")
     @POST
     suspend fun vehicleRegistration(@Url url:String,@Header("TENANT")  TENANT:String,
                                      @Header("Authorization")  partnerToken:String, @Body jsonObject: RequestBody): Response<GetEncriptResponseData>
-    @Headers( "Content-Type: application/json; charset=utf-8")
-    @POST
-    suspend fun paymentWallet(@Url url:String,@Header("TENANT")  TENANT:String,@Body jsonObject: RequestBody): Response<GetEncriptResponseData>
+//    @Headers( "Content-Type: application/json; charset=utf-8")
+//    @POST
+//    suspend fun paymentWallet(@Url url:String,@Header("TENANT")  TENANT:String,@Body jsonObject: RequestBody): Response<GetEncriptResponseData>
 
 
     @Multipart
@@ -42,9 +80,9 @@ interface RetrofitService {
         @Part addressProof: MultipartBody.Part, @Part idProof: MultipartBody.Part, @Part ackDocument: MultipartBody.Part
     ):Response<UploadKycResData>
 
-    @Headers( "Content-Type: application/json; charset=utf-8")
-    @POST()
-    suspend fun unLockKit(@Url url:String,@Header("TENANT")  TENANT:String,@Body jsonObject: RequestBody): Response<GetEncriptResponseData>
+//    @Headers( "Content-Type: application/json; charset=utf-8")
+//    @POST()
+//    suspend fun unLockKit(@Url url:String,@Header("TENANT")  TENANT:String,@Body jsonObject: RequestBody): Response<GetEncriptResponseData>
 
     /*@Headers( "Content-Type: application/json; charset=utf-8")
     @POST()
@@ -54,9 +92,9 @@ interface RetrofitService {
     @POST()
     suspend fun getTagList(@Url url:String,@Header("TENANT")  TENANT:String,@Header("Authorization")  authorization:String,@Body jsonObject: RequestBody): Response<GetEncriptResponseData>
 
-    @Headers( "Content-Type: application/json; charset=utf-8")
-    @POST()
-    suspend fun tagClosure(@Url url:String,@Header("TENANT")  TENANT:String,@Header("Authorization")  authorization:String,@Body jsonObject: RequestBody): Response<GetEncriptResponseData>
+//    @Headers( "Content-Type: application/json; charset=utf-8")
+//    @POST()
+//    suspend fun tagClosure(@Url url:String,@Header("TENANT")  TENANT:String,@Header("Authorization")  authorization:String,@Body jsonObject: RequestBody): Response<GetEncriptResponseData>
 
     @Headers( "Content-Type: application/json; charset=utf-8")
     @POST()

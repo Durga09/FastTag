@@ -12,32 +12,49 @@ import retrofit2.http.PartMap
 
 class FasTagRepository constructor(private val retrofitService: RetrofitService) {
     suspend fun generateOtp(tenant:String,partnerId:String,partnerToken:String,jsonObj:RequestBody)=
-        retrofitService.generateOtp(tenant,partnerId,partnerToken,jsonObj)
+        retrofitService.generateOtp(AppConstants.LoginBaseUrl+AppConstants.GetEncryptedData,tenant,partnerId,AppConstants.baseURL+"kyc/customer/generate/otp",partnerToken,jsonObj)
 
     suspend fun customerRegistration(tenant:String,partnerId:String,partnerToken:String,jsonObj:RequestBody)=
-        retrofitService.customerRegistration(tenant,partnerId,partnerToken,jsonObj)
+        retrofitService.generateOtp(AppConstants.LoginBaseUrl+AppConstants.GetEncryptedData,tenant,partnerId,AppConstants.baseURL+"kyc/v2/register",partnerToken,jsonObj)
 
     suspend fun vehicleRegistration(tenant:String,partnerToken:String,jsonObj:RequestBody)=
-        retrofitService.vehicleRegistration(AppConstants.SSLTestBaseUrl+AppConstants.vehicleRegistration,tenant,partnerToken,jsonObj)
+        retrofitService.vehicleRegistrationEncript(AppConstants.LoginBaseUrl+AppConstants.GetEncryptedData,tenant,partnerToken,AppConstants.baseURL+"Yappay/registration-manager/v3/register",jsonObj)
+
+    suspend fun getTagList(tenant:String,authorization:String,jsonObj:RequestBody)=
+        retrofitService.getTagInfoEncript(AppConstants.LoginBaseUrl+AppConstants.GetEncryptedData,tenant,AppConstants.baseURL+AppConstants.getTagList,authorization,jsonObj)
+
+    suspend fun tagClosure(tenant:String,authorization:String,jsonObj:RequestBody)=
+        retrofitService.getTagInfoEncript(AppConstants.LoginBaseUrl+AppConstants.GetEncryptedData,tenant,AppConstants.baseURL+AppConstants.tagClosure,authorization,jsonObj)
+
+
+    suspend fun unLockKit(tenant:String,jsonObj:RequestBody)=
+        retrofitService.unLockKit(AppConstants.LoginBaseUrl+AppConstants.GetEncryptedData,tenant,AppConstants.baseURL+AppConstants.UnregisteredNegativeList,jsonObj)
 
     suspend fun fileUpload(tenant:String,partnerId:String, partnerToken:String,  partMap: MutableMap<String,RequestBody>,
                             addressProof: MultipartBody.Part, dpProof: MultipartBody.Part, ackDocument: MultipartBody.Part)=
         retrofitService.uploadKycResponse(AppConstants.baseURL_NON_ENCRIPT+AppConstants.uploadKyc,tenant,partnerId,partnerToken,partMap,addressProof,dpProof,ackDocument)
 
-    suspend fun unLockKit(tenant:String,jsonObj:RequestBody)=
-        retrofitService.unLockKit(AppConstants.SSLTestBaseUrl+AppConstants.UnregisteredNegativeList,tenant,jsonObj)
+
+    suspend fun replaceTag(tenant:String,authorization:String,jsonObj:RequestBody)=
+        retrofitService.getTagInfoEncript(AppConstants.LoginBaseUrl+AppConstants.GetEncryptedData,tenant,AppConstants.baseURL+AppConstants.replaceTag,authorization,jsonObj)
+
+    suspend fun loadWalletRequest(tenant:String,jsonObj:RequestBody)=
+        retrofitService.paymentWallet(AppConstants.LoginBaseUrl+AppConstants.GetEncryptedData,tenant,AppConstants.baseURL+AppConstants.paymentLoadWalletBaseUrl,jsonObj)
+
+//    suspend fun unLockKit(tenant:String,jsonObj:RequestBody)=
+//        retrofitService.unLockKit(AppConstants.SSLTestBaseUrl+AppConstants.UnregisteredNegativeList,tenant,jsonObj)
 
     /*suspend fun getTagList(tenant:String,authorization:String,jsonObj:RequestBody)=
         retrofitService.getTagList(AppConstants.SSLTestBaseUrl+AppConstants.getTagList,tenant,authorization,jsonObj)
 */
-    suspend fun getTagList(tenant:String,authorization:String,jsonObj:RequestBody)=
-        retrofitService.getTagList(AppConstants.SSLTestBaseUrl+AppConstants.getTagList,tenant,authorization,jsonObj)
+//    suspend fun getTagList(tenant:String,authorization:String,jsonObj:RequestBody)=
+//        retrofitService.getTagListEncript(AppConstants.LoginBaseUrl+AppConstants.GetEncryptedData,tenant,authorization,AppConstants.SSLTestBaseUrl+AppConstants.getTagList,jsonObj)
 
-    suspend fun tagClosure(tenant:String,authorization:String,jsonObj:RequestBody)=
-        retrofitService.tagClosure(AppConstants.SSLTestBaseUrl+AppConstants.tagClosure,tenant,authorization,jsonObj)
-
-    suspend fun replaceTag(tenant:String,authorization:String,jsonObj:RequestBody)=
-        retrofitService.replaceTag(AppConstants.SSLTestBaseUrl+AppConstants.replaceTag,tenant,authorization,jsonObj)
+//    suspend fun tagClosure(tenant:String,authorization:String,jsonObj:RequestBody)=
+//        retrofitService.tagClosure(AppConstants.SSLTestBaseUrl+AppConstants.tagClosure,tenant,authorization,jsonObj)
+//
+//    suspend fun replaceTag(tenant:String,authorization:String,jsonObj:RequestBody)=
+//        retrofitService.replaceTag(AppConstants.SSLTestBaseUrl+AppConstants.replaceTag,tenant,authorization,jsonObj)
 
     suspend fun loginAgent(jsonObj:RequestBody)=
         retrofitService.loginAgent(AppConstants.LoginBaseUrl+AppConstants.AgentLogin,AppConstants.LoginAuthorization,jsonObj)
@@ -90,8 +107,8 @@ class FasTagRepository constructor(private val retrofitService: RetrofitService)
     suspend fun paymentCheckStatusFromPhonePeRequest(headers:Map<String, String>,merchantId:String,merchantTransactionId:String)=
         retrofitService.checkStatusOfPayment(merchantId,merchantTransactionId,headers)
 
-    suspend fun loadWalletRequest(tenant:String,jsonObj:RequestBody)=
-        retrofitService.paymentWallet(AppConstants.SSLTestBaseUrl+AppConstants.paymentLoadWalletBaseUrl,tenant,jsonObj)
+//    suspend fun loadWalletRequest(tenant:String,jsonObj:RequestBody)=
+//        retrofitService.paymentWallet(AppConstants.SSLTestBaseUrl+AppConstants.paymentLoadWalletBaseUrl,tenant,jsonObj)
 
     suspend fun uploadTagsRequest(jsonObj:RequestBody)=
         retrofitService.uploadTags(AppConstants.LoginBaseUrl+AppConstants.uploadTags,jsonObj,AppConstants.LoginAuthorization)

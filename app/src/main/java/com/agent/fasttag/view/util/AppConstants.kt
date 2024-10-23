@@ -53,9 +53,10 @@ object AppConstants {
     var baseURL_NON_ENCRIPT="https://kycuat.yappay.in/"
     var baseURL= "https://ssltest.yappay.in/"
 
-    var vehicleRegistrationBaseUrl="https://uat-fleetdrive.m2pfintech.com/core/Yappay/registration-manager/"
-    var KitBaseUrl= "https://sit-secure.yappay.in/Yappay/"
-    var SSLTestBaseUrl= "https://ssltest.yappay.in/"
+//    var vehicleRegistrationBaseUrl="https://uat-fleetdrive.m2pfintech.com/core/Yappay/registration-manager/"
+//    var KitBaseUrl= "https://sit-secure.yappay.in/Yappay/"
+//    var SSLTestBaseUrl= "https://ssltest.yappay.in/"
+    var BASE_URL= "https://loginmanagement2023.azurewebsites.net/api/"
 
     var LoginBaseUrl= "https://loginmanagement2023.azurewebsites.net/api/"
     var AgentLogin="User/agent/login"
@@ -80,6 +81,8 @@ object AppConstants {
     val getOtp="SMSApi/SendOtp"
     val uploadTags="common/uploadTags"
     val getTagBySerailNo="common/getTagDetails"
+    val GenerateOtp="generate/otp"
+    val GetEncryptedData="proxy/v1/GetEncryptedData"
 
     var LoginAuthorization="Basic QWJjZGVmZ2hpams6eHl6QDEyMyM="
     var loginFrom=""
